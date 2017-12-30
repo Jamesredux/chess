@@ -6,7 +6,7 @@ class Pawn < Piece
 
 	def initialize(color)
 		super
-		@first_move = true
+		@first_move = true #still has first move
 	end
 
 end

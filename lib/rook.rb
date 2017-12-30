@@ -13,5 +13,3 @@ class Rook < Piece
 
 end	
 
-#bob = Rook.new("black")
-#puts bob.color
