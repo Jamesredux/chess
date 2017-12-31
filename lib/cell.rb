@@ -2,10 +2,10 @@
 
 class Cell 
 
-	attr_accessor :contents, :color
+	attr_accessor :contents, :color	
 
 	def initialize
-		@contents = 0
+		@contents = " "
 		@color = false
 	end	
 

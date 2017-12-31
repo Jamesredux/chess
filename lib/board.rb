@@ -12,23 +12,32 @@ class BoardClass
 
 	def create_board
 		board = []
-		64.times do |x|
-			x = Cell.new
-			board<<x 
-		end
-		board 
+		8.times do  |y|
+			row = []
+			8.times do |x|
+				x = Cell.new
+				row<<x 
+			end
+				board<< row
+			end		
+		 board
+				
+		
+		
 
 	end	
 
 	def draw_board
-		a = @board[0..7]
-		b = @board[8..15]
-		puts a.inspect
-		bottom_line = []
-		a.each do |x| 
-			bottom_line << x.contents
-		end
-		puts bottom_line.inspect
+		board.each do |x|
+			line = []
+			x.each do |x|
+				line<<x.contents
+			
+			end
+			puts line.inspect
+
+		end	
+		puts "\n"	
 	end
 
 
@@ -37,5 +46,10 @@ end
 
 x = BoardClass.new
 x.draw_board
-x.board[7].contents = 'pawn'
+x.board[1][4].contents = 5
 x.draw_board
+x.board[7][0].contents = 7
+x.draw_board
+#x.draw_board
+#x.board[7].contents = "\u2659"
+#x.draw_board
