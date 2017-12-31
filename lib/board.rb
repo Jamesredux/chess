@@ -7,6 +7,7 @@ class BoardClass
 
 	def initialize
 		@board = create_board
+		set_up_board
 
 	end
 
@@ -38,6 +39,15 @@ class BoardClass
 
 		end	
 		puts "\n"	
+	end
+
+	def set_up_board
+		board[1].each do |x|
+			x.contents = "\u265F"
+		end
+		board[6].each do |x|
+			x.contents = "\u2659"
+		end
 	end
 
 
