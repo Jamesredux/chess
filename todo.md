@@ -10,3 +10,5 @@ sort of display.
 
 
 look into saving files
+player class
+player turn
