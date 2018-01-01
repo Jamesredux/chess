@@ -25,7 +25,7 @@ module Draw
 	def create_row(array)
 		row = []
 			array.each do |x|
-				row<< x.contents
+				row<< x.symbol
 			end
 		puts "\u2551#{row[0]} \u2551#{row[1]} \u2551#{row[2]} \u2551#{row[3]} "\
 				 "\u2551#{row[4]} \u2551#{row[5]} \u2551#{row[6]} \u2551#{row[7]} \u2551"		

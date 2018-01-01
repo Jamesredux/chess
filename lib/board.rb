@@ -34,40 +34,104 @@ class BoardClass
 
 
 	def black_start_positions
-		#also have to put piece
-		board[0][0].contents, board[0][7].contents = "\u265C","\u265C"
-		board[0][1].contents, board[0][6].contents = "\u265E","\u265E"
-		board[0][2].contents, board[0][5].contents = "\u265D","\u265D"
-		board[0][3].contents = "\u265B"
-		board[0][4].contents = "\u265A"
+		update_cell(board[0][0], -3)#rook
+		update_cell(board[0][7], -3)#rook
+		update_cell(board[0][1], -5)#knight
+		update_cell(board[0][6], -5)#knight
+		update_cell(board[0][2], -4)#bishop
+		update_cell(board[0][5], -4)#bishop
+		update_cell(board[0][3], -2)#queen
+		update_cell(board[0][4], -1)#king
 		#add pawns
-		board[1].each do |x|
-			x.contents = "\u265F";
+		(0..7).each do |x|
+			update_cell(board[1][x], -6)
 		end
 	end
 
 	def white_start_positions
-		board[7][0].contents, board[7][7].contents = "\u2656","\u2656"
-		board[7][1].contents, board[7][6].contents = "\u2658","\u2658"
-		board[7][2].contents, board[7][5].contents = "\u2657","\u2657"
-		board[7][3].contents = "\u2655"
-		board[7][4].contents = "\u2654"
+		update_cell(board[7][0], 3)#rook
+		update_cell(board[7][7], 3)#rook
+		update_cell(board[7][1], 5)#knight
+		update_cell(board[7][6], 5)#knight
+		update_cell(board[7][2], 4)#bishop
+		update_cell(board[7][5], 4)#bishop
+		update_cell(board[7][3], 2)#queen
+		update_cell(board[7][4], 1)#king
 		#add pawns
-		board[6].each do |x|
-			x.contents = "\u2659"
+		(0..7).each do |x|
+			update_cell(board[6][x], 6)
 		end
 	end
 
+	def update_cell(cell, piece=0)
+			if piece == 0
+				symbol = ' '
+			else
+				symbol = symbol_check(piece)
+				
+			end
 
+		color = color_check(piece)
+		cell.piece = piece
+		cell.piece_color = color
+		cell.symbol = symbol
+		
+	end
 	
+
+	def symbol_check(piece)
+		case piece 
+		when -1 #black king
+			"\u265A"
+		when -2 #black queen
+			"\u265B"
+		when -3 #black rook
+			"\u265C"
+		when -4 #black bishop
+			"\u265D"
+		when -5 #black knight
+			"\u265E"
+		when -6 #black pawn
+			"\u265F"				
+
+		when 1 #white king
+			"\u2654"
+		when 2 #white queen
+			"\u2655"
+		when 3 #white rook
+			"\u2656"
+		when 4 #white bishop
+			"\u2657"
+		when 5 #white knight
+			"\u2658"
+		when 6 #white pawn
+			"\u2659"
+		end
+
+	end
+		
+		def color_check(piece)
+			if piece == 0 
+				nil
+			else 
+				piece < 0 ? "Black" : "White"
+			end	
+		end			
+
+	def empty_cell(cell) #just a simplified method for emptying a cell
+		update_cell(cell)
+	end						
+
 
 end	
 
 x = BoardClass.new
 x.draw_board
 
-x.board[1][4].contents = 5
+
+x.update_cell(x.board[5][0], 6)
 x.draw_board
-x.board[5][0].contents = 7
+x.empty_cell(x.board[6][4])
 x.draw_board
+puts x.board.inspect
 

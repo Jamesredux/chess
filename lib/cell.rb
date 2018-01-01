@@ -2,14 +2,19 @@
 
 class Cell 
 
-	attr_accessor :contents, :color	
+	attr_accessor :symbol, :piece_color, :piece	
 
 	def initialize
-		@contents = " "
-		@color = false
-		@piece = false
+		@symbol = " "
+		@piece_color = nil
+		@piece = 0
 	end	
 
+
+	def update_cell(cell, piece)
+
+
+	end
 
 
 end	
