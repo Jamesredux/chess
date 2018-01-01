@@ -7,6 +7,7 @@ class Cell
 	def initialize
 		@contents = " "
 		@color = false
+		@piece = false
 	end	
 
 

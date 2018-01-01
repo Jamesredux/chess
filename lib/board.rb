@@ -34,6 +34,7 @@ class BoardClass
 
 
 	def black_start_positions
+		#also have to put piece
 		board[0][0].contents, board[0][7].contents = "\u265C","\u265C"
 		board[0][1].contents, board[0][6].contents = "\u265E","\u265E"
 		board[0][2].contents, board[0][5].contents = "\u265D","\u265D"
