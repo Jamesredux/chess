@@ -63,6 +63,13 @@ class BoardClass
 		end
 	end
 
+
+	def update_board(new_cell, old_cell, piece)
+		empty_cell(old_cell)
+		update_cell(new_cell, piece)
+
+	end	
+
 	def update_cell(cell, piece=0)
 			if piece == 0
 				symbol = ' '
