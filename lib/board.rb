@@ -64,7 +64,8 @@ class BoardClass
 	end
 
 
-	def update_board(new_cell, old_cell, piece)
+	def update_board(new_cell, old_cell)
+		piece = old_cell.piece
 		empty_cell(old_cell)
 		update_cell(new_cell, piece)
 
@@ -83,6 +84,10 @@ class BoardClass
 		cell.piece_color = color
 		cell.symbol = symbol
 		
+	end
+
+	def empty_cell(cell) #just a simplified method for emptying a cell
+		update_cell(cell)
 	end
 	
 
@@ -125,9 +130,7 @@ class BoardClass
 			end	
 		end			
 
-	def empty_cell(cell) #just a simplified method for emptying a cell
-		update_cell(cell)
-	end						
+							
 
 
 end	

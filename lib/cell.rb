@@ -11,10 +11,7 @@ class Cell
 	end	
 
 
-	def update_cell(cell, piece)
-
-
-	end
+	
 
 
 end	

@@ -21,10 +21,10 @@ class Game
 	def play_game
 		game_over = false
 		until game_over
-		puts "input your choice"
+		puts "Input your choice"
 		choice = get_choice
 		move = convert_choice(choice)
-		@board.update_board(@board.board[move[2]][move[3]], @board.board[move[0]][move[1]], 5)
+		@board.update_board(@board.board[move[2]][move[3]], @board.board[move[0]][move[1]])
 		@board.draw_board
 		end
 	end
@@ -132,6 +132,8 @@ class Game
 
 
 
+#next job need to check if player has piece on square selected and record what that piece is
+#then check if move is valid 
 
 
 
