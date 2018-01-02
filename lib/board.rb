@@ -125,6 +125,8 @@ class BoardClass
 
 end	
 
+
+=begin
 x = BoardClass.new
 x.draw_board
 
@@ -135,3 +137,4 @@ x.empty_cell(x.board[6][4])
 x.draw_board
 puts x.board.inspect
 
+=end

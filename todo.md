@@ -7,7 +7,7 @@ sort of display.
 
 
 
-
+create address on grid a1 - h8 etc
 
 look into saving files
 player class
