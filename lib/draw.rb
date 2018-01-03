@@ -1,15 +1,15 @@
 
 module Draw
 
-	TOP_LINE = "\u2554\u2550\u2550\u2566\u2550\u2550\u2566\u2550\u2550\u2566\u2550\u2550\u2566\u2550\u2550"\
+	TOP_LINE = "  \u2554\u2550\u2550\u2566\u2550\u2550\u2566\u2550\u2550\u2566\u2550\u2550\u2566\u2550\u2550"\
   						"\u2566\u2550\u2550\u2566\u2550\u2550\u2566\u2550\u2550\u2557"
 
-  BOTTOM_LINE = "\u255A\u2550\u2550\u2569\u2550\u2550\u2569\u2550\u2550\u2569\u2550\u2550\u2569"\
+  BOTTOM_LINE = "  \u255A\u2550\u2550\u2569\u2550\u2550\u2569\u2550\u2550\u2569\u2550\u2550\u2569"\
 								"\u2550\u2550\u2569\u2550\u2550\u2569\u2550\u2550\u2569\u2550\u2550\u255D"
 								
-	BOTTOM_LABLE =	" A  B  C  D  E  F  G  H"
+	BOTTOM_LABLE =	"   A  B  C  D  E  F  G  H"
 
-	INTER_LINE =	"\u2560\u2550\u2550\u256C\u2550\u2550\u256C\u2550\u2550\u256C\u2550"\
+	INTER_LINE =	"  \u2560\u2550\u2550\u256C\u2550\u2550\u256C\u2550\u2550\u256C\u2550"\
 							"\u2550\u256C\u2550\u2550\u256C\u2550\u2550\u256C\u2550\u2550\u256C\u2550\u2550\u2563" 								
 
 
@@ -17,23 +17,29 @@ module Draw
    	puts TOP_LINE
 
 		(0..6).each do |x|
-			create_row(@board[x])
+			row_number = row_convert(x)
+			create_row(@board[x], row_number)
 			puts INTER_LINE
 		end
-			create_row(@board[7])
+			create_row(@board[7], 1)
 			puts BOTTOM_LINE
 			puts BOTTOM_LABLE
 	end
 
-	def create_row(array)
+	def create_row(array, row_number)
 		row = []
 			array.each do |x|
 				row<< x.symbol
 			end
-		puts "\u2551#{row[0]} \u2551#{row[1]} \u2551#{row[2]} \u2551#{row[3]} "\
+		puts "#{row_number} \u2551#{row[0]} \u2551#{row[1]} \u2551#{row[2]} \u2551#{row[3]} "\
 				 "\u2551#{row[4]} \u2551#{row[5]} \u2551#{row[6]} \u2551#{row[7]} \u2551"		
 	end	 	
 
+
+	def row_convert(x)
+		new_num = 8 - x 
+		new_num
+	end
 end
 
 

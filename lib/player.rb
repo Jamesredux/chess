@@ -1,6 +1,9 @@
 class Player
 
-	def initialize(name ="Player 1")
+	attr_accessor :player_name, :color
+	
+	def initialize(player_name, color)
+		@player_name = player_name
 		@color = color
 		@turn = 1
 

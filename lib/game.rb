@@ -1,4 +1,5 @@
 require_relative 'board'
+require_relative 'player'
 
 class Game
 
@@ -7,7 +8,17 @@ class Game
 		@board.draw_board
 
 
-	end	
+
+
+	end
+
+	def create_players
+		@player_1 = Player.new("Player_1", "White")
+		@player_2 = Player.new("Player_2", "Black")
+		@player_turn = @player_1
+	end		
+
+
 
 	def move_piece
 		@board.empty_cell(@board.board[7][1]) #try to move this to board class? so that only thing that is input is coordinates.
@@ -21,10 +32,11 @@ class Game
 	def play_game
 		game_over = false
 		until game_over
-		puts "Input your choice"
+		puts "#{@player_turn.player_name} Input your choice"
 		choice = get_choice
 		move = convert_choice(choice)
 		@board.update_board(@board.board[move[2]][move[3]], @board.board[move[0]][move[1]])
+		switch_player
 		@board.draw_board
 		end
 	end
@@ -38,6 +50,12 @@ class Game
 		elsif valid_input(move_choice) == false
 			puts "Invalid input - please use the format B3H5"
 			move_choice = get_choice
+		elsif players_piece(move_choice) == false
+			puts "You don't have a piece on that square!"
+			move_choice = get_choice
+		elsif land_on_own_piece(move_choice) == false
+			puts "You can't move there, you already have a piece on that square."
+			move_choice = get_choice		
 		end
 			move_choice
 	end	
@@ -79,6 +97,7 @@ class Game
 			false	
 		end			 
 	end
+
 
 	def convert_choice(choice)
 		choice_array = choice.split('')
@@ -129,7 +148,31 @@ class Game
 	end		
 
 
+	 #method to check that square selected has one of the players pieces on it.
+	def players_piece(choice)
+		coordinates = convert_choice(choice)
+		x = coordinates[0]
+		y = coordinates[1]
+		@board.board[x][y].piece_color == @player_turn.color ? true : false
+	end	
 
+		#method to check that square player wants to move to doesn't have one of his pieces already there
+		#this could be included in the valid move method when created as I will also have to check if the route
+		#to the square is clear.
+	def land_on_own_piece(choice)
+		coordinates = convert_choice(choice)
+		x = coordinates[2]
+		y = coordinates[3]
+		@board.board[x][y].piece_color == @player_turn.color ? false : true
+	end	
+
+	def switch_player
+		if @player_turn == @player_1
+			@player_turn = @player_2
+		else
+			@player_turn = @player_1
+		end
+	end
 
 
 #next job need to check if player has piece on square selected and record what that piece is
@@ -142,6 +185,7 @@ end
 
 
 bob = Game.new
+bob.create_players
 bob.new_game
 
 bob.play_game
