@@ -1,6 +1,7 @@
 require_relative 'cell'
 require_relative 'draw'
 
+
 class BoardClass
 	include Draw
 	
@@ -130,21 +131,84 @@ class BoardClass
 			end	
 		end			
 
-							
+	def valid_move(move_choice, color)
+		@coordinates = convert_choice(move_choice)
+		puts @coordinates.inspect
+		if players_piece?(@coordinates, color) == false
+			puts "NO dummy you don't have a piece on that square..."
+			 false
+		elsif land_on_own_piece?(@coordinates, color) == false
+			puts "You alread have a piece on the destination square"
+				false	 
+		else
+			true
+		end	
+
+	end		
+
+	def players_piece?(coordinates, color)
+		x = coordinates[0]
+		y = coordinates[1]
+		board[x][y].piece_color == color ? true : false
+		
+	end	
+
+	def land_on_own_piece?(coordinates, color)
+		x = coordinates[2]
+		y = coordinates[3]
+		@board[x][y].piece_color == color ? false : true
+	end	
+
+	def convert_choice(choice)
+		choice_array = choice.split('')
+		converted = []
+		choice_array.each do |x|
+			converted << convert_element(x)
+	end	
+			
+		reordered_choice = [converted[1], converted[0], converted[3], converted[2]]
+		reordered_choice
+	end
+
+	def convert_element(x)
+		number_coords = ['1','2','3','4','5','6','7','8']
+		letter_coords = ['a','b','c','d','e','f','g','h']
+		if number_coords.include? x 
+			number_convert(x)
+		elsif letter_coords.include? x 
+			letter_convert(x)
+		end		
+	end	
+
+	def number_convert(x)
+		num = x.to_i
+		new_num = 8 - num 
+		new_num
+	end
+	
+	def letter_convert(x)
+		case x
+		when 'a'	
+			0
+		when 'b'	
+			1
+		when 'c'	
+			2
+		when 'd'	
+			3
+		when 'e'	
+			4
+		when 'f'	
+			5
+		when 'g'	
+			6
+		when 'h'	
+			7
+		end
+	end		
+				
 
 
 end	
 
 
-=begin
-x = BoardClass.new
-x.draw_board
-
-
-x.update_cell(x.board[5][0], 6)
-x.draw_board
-x.empty_cell(x.board[6][4])
-x.draw_board
-puts x.board.inspect
-
-=end

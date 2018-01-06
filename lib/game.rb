@@ -2,6 +2,7 @@ require_relative 'board'
 require_relative 'player'
 
 class Game
+	attr_accessor :player_turn	
 
 	def new_game
 		@board = BoardClass.new
@@ -34,7 +35,8 @@ class Game
 		until game_over
 		puts "#{@player_turn.player_name} Input your choice"
 		choice = get_choice
-		move = convert_choice(choice)
+		move = convert_choice(choice)  #get rid of this so I can get rid of convert choice method from this page
+		#will have to send over a1a3 etc to update board method and it can be converted over there.
 		@board.update_board(@board.board[move[2]][move[3]], @board.board[move[0]][move[1]])
 		switch_player
 		@board.draw_board
@@ -50,12 +52,15 @@ class Game
 		elsif valid_input(move_choice) == false
 			puts "Invalid input - please use the format B3H5"
 			move_choice = get_choice
-		elsif players_piece(move_choice) == false
-			puts "You don't have a piece on that square!"
-			move_choice = get_choice
-		elsif land_on_own_piece(move_choice) == false
-			puts "You can't move there, you already have a piece on that square."
-			move_choice = get_choice		
+		elsif @board.valid_move(move_choice, @player_turn.color) == false #this method will be a number of methods that give 
+				#there own reasons for the invalid input.
+			move_choice = get_choice	
+		#elsif players_piece(move_choice) == false    #this should be in board class
+		#	puts "You don't have a piece on that square!"
+		#	move_choice = get_choice
+		#elsif land_on_own_piece(move_choice) == false  #so should this!
+		#	puts "You can't move there, you already have a piece on that square."
+		#	move_choice = get_choice		
 		end
 			move_choice
 	end	
@@ -98,7 +103,7 @@ class Game
 		end			 
 	end
 
-
+ 
 	def convert_choice(choice)
 		choice_array = choice.split('')
 		converted = []
@@ -147,7 +152,7 @@ class Game
 		end
 	end		
 
-
+=begin
 	 #method to check that square selected has one of the players pieces on it.
 	def players_piece(choice)
 		coordinates = convert_choice(choice)
@@ -166,6 +171,7 @@ class Game
 		@board.board[x][y].piece_color == @player_turn.color ? false : true
 	end	
 
+=end
 	def switch_player
 		if @player_turn == @player_1
 			@player_turn = @player_2
@@ -174,9 +180,6 @@ class Game
 		end
 	end
 
-
-#next job need to check if player has piece on square selected and record what that piece is
-#then check if move is valid 
 
 
 
