@@ -1,5 +1,6 @@
 require_relative 'cell'
 require_relative 'draw'
+require_relative 'pawn'
 
 
 class BoardClass
@@ -9,7 +10,7 @@ class BoardClass
 
 	def initialize
 		@board = create_board
-		set_up_board
+		#set_up_board
 	end
 
 	def create_board
@@ -68,7 +69,7 @@ class BoardClass
 	end	
 
 
-	def move_piece(new_cell, old_cell)
+	def move_piece(new_cell, old_cell)  #add memory to this to remember move if it needs to be taken back.
 		piece = old_cell.piece
 		empty_cell(old_cell)
 		update_cell(new_cell, piece)
@@ -81,7 +82,7 @@ class BoardClass
 				symbol = symbol_check(piece)
 			end
 		color = color_check(piece)
-		cell.piece = piece
+		cell.piece = piece 
 		cell.piece_color = color
 		cell.symbol = symbol
 	end
@@ -245,9 +246,25 @@ def valid_input(move_choice)
 			7
 		end
 	end		
-				
+		
 
+#this is currently in piece  branch - 
+#looking for way to update cells with piece objects 
+#the below stuff works at what it does
+
+	def piece_test(cell)
+			
+		
+		cell.piece = Pawn.new("white")
+		cell.piece_color = cell.piece.color
+		cell.symbol = cell.piece.symbol
+	end
 
 end	
 
+
+bob = BoardClass.new
+bob.draw_board
+bob.piece_test(bob.board[7][0])
+bob.draw_board
 

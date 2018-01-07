@@ -49,3 +49,31 @@ def create_row(array)
 		 "\u2551#{row[4]} \u2551#{row[5]} \u2551#{row[6]} \u2551#{row[7]} \u2551"
 end	 	
 					 
+
+pieces_index = { -1 =>	"\u265A", -1 =>	"\u265A", -1 =>	"\u265A", -1 =>	"\u265A", -1 =>	"\u265A", -1 =>	"\u265A",
+									-1 =>	"\u265A", -1 =>	"\u265A", -1 =>	"\u265A", -1 =>	"\u265A", -1 =>	"\u265A", -1 =>	"\u265A"}
+		when -2 #black queen
+			"\u265B"
+		when -3 #black rook
+			"\u265C"
+		when -4 #black bishop
+			"\u265D"
+		when -5 #black knight
+			"\u265E"
+		when -6 #black pawn
+			"\u265F"				
+
+		when 1 #white king
+			"\u2654"
+		when 2 #white queen
+			"\u2655"
+		when 3 #white rook
+			"\u2656"
+		when 4 #white bishop
+			"\u2657"
+		when 5 #white knight
+			"\u2658"
+		when 6 #white pawn
+			"\u2659"
+		end
+	end
