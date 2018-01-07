@@ -172,9 +172,12 @@ class BoardClass
 
 def valid_input(move_choice)
 		choice_array = move_choice.split('')
-		if letters_ok(choice_array[0], choice_array[2]) ==false
+		puts choice_array.inspect
+		if letters_ok(choice_array[0], choice_array[2]) == false
+			puts "ffffffasssllllse"
 			false
 		elsif numbers_ok(choice_array[1], choice_array[3]) == false
+			puts "numbers false"
 			false
 		elsif choice_array[0] == choice_array[2] && choice_array[1] == choice_array[3]
 			false
@@ -186,7 +189,7 @@ def valid_input(move_choice)
 	def letters_ok(a,b)
 		letter_coords = ['a','b','c','d','e','f','g','h']
 
-		if letter_coords.include? a && b 
+		if letter_coords.include?(a) && letter_coords.include?(b) 
 			true
 		else
 			false
@@ -196,7 +199,7 @@ def valid_input(move_choice)
 	def numbers_ok(a, b)	
 		number_coords = ['1','2','3','4','5','6','7','8']
 
-		if  number_coords.include? a && b
+		if  number_coords.include?(a) && number_coords.include?(b)
 			true
 		else
 			false	
