@@ -6,7 +6,7 @@ class Cell
 
 	def initialize
 		@symbol = " "
-		@piece_color = nil
+		#@piece_color = nil
 		@piece = 0
 	end	
 

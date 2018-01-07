@@ -1,6 +1,11 @@
 require_relative 'cell'
 require_relative 'draw'
 require_relative 'pawn'
+require_relative 'rook'
+require_relative 'queen'
+require_relative 'king'
+require_relative 'bishop'
+require_relative 'knight'
 
 
 class BoardClass
@@ -252,19 +257,51 @@ def valid_input(move_choice)
 #looking for way to update cells with piece objects 
 #the below stuff works at what it does
 
-	def piece_test(cell)
+	def add_pieces_test
+		piece_test(board[7][0], Rook, "white")
+		piece_test(board[7][7], Rook, "white")
+		piece_test(board[7][2], Bishop, "white")
+		piece_test(board[7][5], Bishop, "white")
+		piece_test(board[7][1], Knight, "white")
+		piece_test(board[7][6], Knight, "white")
+		piece_test(board[7][3], Queen, "white")
+		piece_test(board[7][4], King, "white")
+
+		
+		(0..7).each do |x|
+			piece_test(board[6][x], Pawn, "white")
+		end
+	end
+
+
+
+	def piece_test(cell, piece, color)
 			
 		
-		cell.piece = Pawn.new("white")
-		cell.piece_color = cell.piece.color
+		cell.piece = piece.new(color)
+		#cell.piece_color = cell.piece.color
 		cell.symbol = cell.piece.symbol
 	end
 
+	def move_test(old_cell, new_cell)
+		new_cell.piece = old_cell.piece
+		new_cell.symbol = new_cell.piece.symbol #need to update this automatically
+		empty_cell(old_cell)
+	end
+		
 end	
+
+
+
 
 
 bob = BoardClass.new
 bob.draw_board
-bob.piece_test(bob.board[7][0])
+
+#bob.piece_test(bob.board[7][0])
+
+bob.add_pieces_test
+bob.draw_board
+bob.move_test(bob.board[7][0], bob.board[0][0])
 bob.draw_board
 
