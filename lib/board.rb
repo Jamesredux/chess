@@ -64,12 +64,18 @@ class BoardClass
 		end
 	end
 
+	def update_board(move_choice)
+		coordinates = convert_choice(move_choice)
+		old_cell = board[coordinates[0]][coordinates[1]]
+		new_cell = board[coordinates[2]][coordinates[3]]
+		move_piece(new_cell, old_cell)
+	end	
 
-	def update_board(new_cell, old_cell)
+
+	def move_piece(new_cell, old_cell)
 		piece = old_cell.piece
 		empty_cell(old_cell)
 		update_cell(new_cell, piece)
-
 	end	
 
 	def update_cell(cell, piece=0)
@@ -77,14 +83,11 @@ class BoardClass
 				symbol = ' '
 			else
 				symbol = symbol_check(piece)
-				
 			end
-
 		color = color_check(piece)
 		cell.piece = piece
 		cell.piece_color = color
 		cell.symbol = symbol
-		
 	end
 
 	def empty_cell(cell) #just a simplified method for emptying a cell
@@ -120,26 +123,24 @@ class BoardClass
 		when 6 #white pawn
 			"\u2659"
 		end
-
 	end
 		
-		def color_check(piece)
-			if piece == 0 
+	def color_check(piece)
+		if piece == 0 
 				nil
-			else 
-				piece < 0 ? "Black" : "White"
-			end	
-		end			
+		else 
+			piece < 0 ? "Black" : "White"
+		end	
+	end			
 
 	def valid_move(move_choice, color)
 		@coordinates = convert_choice(move_choice)
-		puts @coordinates.inspect
 		if players_piece?(@coordinates, color) == false
-			puts "NO dummy you don't have a piece on that square..."
-			 false
+			puts "You do not have a piece on that square."
+			false
 		elsif land_on_own_piece?(@coordinates, color) == false
-			puts "You alread have a piece on the destination square"
-				false	 
+			puts "You can not move to a square you alreay occupy"
+			false	 
 		else
 			true
 		end	
