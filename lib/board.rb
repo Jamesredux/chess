@@ -35,14 +35,12 @@ class BoardClass
 
 
 	def black_start_positions
-		update_cell(board[0][0], -3)#rook
-		update_cell(board[0][7], -3)#rook
-		update_cell(board[0][1], -5)#knight
-		update_cell(board[0][6], -5)#knight
-		update_cell(board[0][2], -4)#bishop
-		update_cell(board[0][5], -4)#bishop
-		update_cell(board[0][3], -2)#queen
-		update_cell(board[0][4], -1)#king
+		  black_back_row_pieces = [-3, -5, -4, -2, -1, -4, -5, -3]
+		  x = 0
+		  black_back_row_pieces.each do |y|
+		  	update_cell(board[0][x], y)
+		  	x += 1
+		  end		
 		#add pawns
 		(0..7).each do |x|
 			update_cell(board[1][x], -6)
@@ -50,14 +48,12 @@ class BoardClass
 	end
 
 	def white_start_positions
-		update_cell(board[7][0], 3)#rook
-		update_cell(board[7][7], 3)#rook
-		update_cell(board[7][1], 5)#knight
-		update_cell(board[7][6], 5)#knight
-		update_cell(board[7][2], 4)#bishop
-		update_cell(board[7][5], 4)#bishop
-		update_cell(board[7][3], 2)#queen
-		update_cell(board[7][4], 1)#king
+			white_back_row_pieces = [3, 5, 4, 2, 1, 4, 5, 3]
+		  x = 0
+		  white_back_row_pieces.each do |y|
+		  	update_cell(board[7][x], y)
+		  	x += 1
+		  end				
 		#add pawns
 		(0..7).each do |x|
 			update_cell(board[6][x], 6)
