@@ -29,57 +29,12 @@ class Game
 	def get_choice
 		move_choice = gets.downcase.chomp
 		
-		#if correct_length(move_choice) == false
-		#	puts "Incorrect input! Please only input 4 characters eg. A6A5"
-		#	move_choice = get_choice
-	#	if valid_input(move_choice) == false
-	#		puts "Invalid input - please use the format B3H5"
-	#		move_choice = get_choice
-		if @board.valid_move(move_choice, @player_turn.color) == false #this method will be a number of methods that give 
-				#there own reasons for the invalid input.
+		if @board.valid_move(move_choice, @player_turn.color) == false 
 			move_choice = get_choice		
 		end
 			move_choice
 	end	
 
-=begin
-	def correct_length(input)
-		input.size == 4 ? true : false
-	end	 
-
-	def valid_input(input)
-		choice_array = input.split('')
-		if letters_ok(choice_array[0], choice_array[2]) ==false
-			false
-		elsif numbers_ok(choice_array[1], choice_array[3]) == false
-			false
-		elsif choice_array[0] == choice_array[2] && choice_array[1] == choice_array[3]
-			false
-		else
-		 true
-		end
-	end 			
-
-	def letters_ok(a,b)
-		letter_coords = ['a','b','c','d','e','f','g','h']
-
-		if letter_coords.include? a && b 
-			true
-		else
-			false
-		end
-	end
-
-	def numbers_ok(a, b)	
-		number_coords = ['1','2','3','4','5','6','7','8']
-
-		if  number_coords.include? a && b
-			true
-		else
-			false	
-		end			 
-	end
-=end
 	def switch_player
 		if @player_turn == @player_1
 			@player_turn = @player_2

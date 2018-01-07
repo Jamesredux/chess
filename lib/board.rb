@@ -160,8 +160,7 @@ class BoardClass
 	def players_piece?(coordinates, color)
 		x = coordinates[0]
 		y = coordinates[1]
-		board[x][y].piece_color == color ? true : false
-		
+		board[x][y].piece_color == color ? true : false	
 	end	
 
 	def land_on_own_piece?(coordinates, color)
@@ -172,12 +171,9 @@ class BoardClass
 
 def valid_input(move_choice)
 		choice_array = move_choice.split('')
-		puts choice_array.inspect
 		if letters_ok(choice_array[0], choice_array[2]) == false
-			puts "ffffffasssllllse"
 			false
 		elsif numbers_ok(choice_array[1], choice_array[3]) == false
-			puts "numbers false"
 			false
 		elsif choice_array[0] == choice_array[2] && choice_array[1] == choice_array[3]
 			false
@@ -206,15 +202,12 @@ def valid_input(move_choice)
 		end			 
 	end
 
-
-
-
-	def convert_choice(choice)
-		choice_array = choice.split('')
+	def convert_choice(move_choice)
+		choice_array = move_choice.split('')
 		converted = []
 		choice_array.each do |x|
 			converted << convert_element(x)
-	end	
+		end	
 			
 		reordered_choice = [converted[1], converted[0], converted[3], converted[2]]
 		reordered_choice
