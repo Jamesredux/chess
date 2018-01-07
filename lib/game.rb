@@ -29,19 +29,20 @@ class Game
 	def get_choice
 		move_choice = gets.downcase.chomp
 		
-		if correct_length(move_choice) == false
-			puts "Incorrect input! Please only input 4 characters eg. A6A5"
-			move_choice = get_choice
-		elsif valid_input(move_choice) == false
-			puts "Invalid input - please use the format B3H5"
-			move_choice = get_choice
-		elsif @board.valid_move(move_choice, @player_turn.color) == false #this method will be a number of methods that give 
+		#if correct_length(move_choice) == false
+		#	puts "Incorrect input! Please only input 4 characters eg. A6A5"
+		#	move_choice = get_choice
+	#	if valid_input(move_choice) == false
+	#		puts "Invalid input - please use the format B3H5"
+	#		move_choice = get_choice
+		if @board.valid_move(move_choice, @player_turn.color) == false #this method will be a number of methods that give 
 				#there own reasons for the invalid input.
 			move_choice = get_choice		
 		end
 			move_choice
 	end	
 
+=begin
 	def correct_length(input)
 		input.size == 4 ? true : false
 	end	 
@@ -78,7 +79,7 @@ class Game
 			false	
 		end			 
 	end
-
+=end
 	def switch_player
 		if @player_turn == @player_1
 			@player_turn = @player_2

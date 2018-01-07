@@ -135,7 +135,13 @@ class BoardClass
 
 	def valid_move(move_choice, color)
 		@coordinates = convert_choice(move_choice)
-		if players_piece?(@coordinates, color) == false
+		if correct_length(move_choice) == false 
+			puts "Incorrect input! Please only input 4 characters eg. A6A5"
+			false
+		elsif valid_input(move_choice) == false
+			puts "Invalid input - please use the format B3H5"
+			false	
+		elsif players_piece?(@coordinates, color) == false
 			puts "You do not have a piece on that square."
 			false
 		elsif land_on_own_piece?(@coordinates, color) == false
@@ -146,6 +152,10 @@ class BoardClass
 		end	
 
 	end		
+
+	def correct_length(move_choice)
+		move_choice.size == 4? true :false
+	end
 
 	def players_piece?(coordinates, color)
 		x = coordinates[0]
@@ -159,6 +169,42 @@ class BoardClass
 		y = coordinates[3]
 		@board[x][y].piece_color == color ? false : true
 	end	
+
+def valid_input(move_choice)
+		choice_array = move_choice.split('')
+		if letters_ok(choice_array[0], choice_array[2]) ==false
+			false
+		elsif numbers_ok(choice_array[1], choice_array[3]) == false
+			false
+		elsif choice_array[0] == choice_array[2] && choice_array[1] == choice_array[3]
+			false
+		else
+		 true
+		end
+	end 			
+
+	def letters_ok(a,b)
+		letter_coords = ['a','b','c','d','e','f','g','h']
+
+		if letter_coords.include? a && b 
+			true
+		else
+			false
+		end
+	end
+
+	def numbers_ok(a, b)	
+		number_coords = ['1','2','3','4','5','6','7','8']
+
+		if  number_coords.include? a && b
+			true
+		else
+			false	
+		end			 
+	end
+
+
+
 
 	def convert_choice(choice)
 		choice_array = choice.split('')
