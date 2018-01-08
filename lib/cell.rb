@@ -6,8 +6,8 @@ class Cell
 
 	def initialize
 		@symbol = " "
-		#@piece_color = nil
 		@piece = 0
+		#@piece_color = nil
 	end	
 
 
