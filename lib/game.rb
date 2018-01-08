@@ -10,8 +10,8 @@ class Game
 	end
 
 	def create_players
-		@player_1 = Player.new("Player_1", "White")
-		@player_2 = Player.new("Player_2", "Black")
+		@player_1 = Player.new("Player_1", "white")
+		@player_2 = Player.new("Player_2", "black")
 		@player_turn = @player_1
 	end		
 

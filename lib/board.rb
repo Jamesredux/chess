@@ -15,7 +15,7 @@ class BoardClass
 
 	def initialize
 		@board = create_board
-		#set_up_board
+		set_up_board
 	end
 
 	def create_board
@@ -34,11 +34,13 @@ class BoardClass
 
 
 	def set_up_board
-		black_start_positions
-		white_start_positions		
+		place_white_pieces
+		place_black_pieces
+		#black_start_positions
+		#white_start_positions		
 	end
 
-
+=begin
 
 	def black_start_positions
 		  black_back_row_pieces = [-3, -5, -4, -2, -1, -4, -5, -3]
@@ -65,15 +67,15 @@ class BoardClass
 			update_cell(board[6][x], 6)
 		end
 	end
-
+=end
 	def update_board(move_choice)
 		coordinates = convert_choice(move_choice)
 		old_cell = board[coordinates[0]][coordinates[1]]
 		new_cell = board[coordinates[2]][coordinates[3]]
-		move_piece(new_cell, old_cell)
+		move_piece_new(old_cell, new_cell)
 	end	
 
-
+=begin
 	def move_piece(new_cell, old_cell)  #add memory to this to remember move if it needs to be taken back.
 		piece = old_cell.piece
 		empty_cell(old_cell)
@@ -91,12 +93,12 @@ class BoardClass
 		cell.piece_color = color
 		cell.symbol = symbol
 	end
-
+=end
 	def empty_cell(cell) #just a simplified method for emptying a cell
-		update_cell(cell)
+		update_cell_new(cell)
 	end
 	
-
+=begin
 	def symbol_check(piece)
 		case piece 
 		when -1 #black king
@@ -133,7 +135,9 @@ class BoardClass
 		else 
 			piece < 0 ? "Black" : "White"
 		end	
-	end			
+	end	
+
+=end			
 
 	def valid_move(move_choice, color)
 		@coordinates = convert_choice(move_choice)
@@ -162,13 +166,24 @@ class BoardClass
 	def players_piece?(coordinates, color)
 		x = coordinates[0]
 		y = coordinates[1]
-		board[x][y].piece_color == color ? true : false	
+		if board[x][y].piece == 0 || board[x][y].piece.color != color
+			false
+		else
+			true
+		end		 	
 	end	
 
 	def land_on_own_piece?(coordinates, color)
 		x = coordinates[2]
 		y = coordinates[3]
-		@board[x][y].piece_color == color ? false : true
+		if board[x][y].piece == 0
+			true
+		elsif 
+			board[x][y].piece.color == color 
+		  false
+		else
+			true
+		end		
 	end	
 
 def valid_input(move_choice)
@@ -257,25 +272,40 @@ def valid_input(move_choice)
 #looking for way to update cells with piece objects 
 #the below stuff works at what it does
 
-	def add_pieces_test
-		piece_test(board[7][0], Rook, "white")
-		piece_test(board[7][7], Rook, "white")
-		piece_test(board[7][2], Bishop, "white")
-		piece_test(board[7][5], Bishop, "white")
-		piece_test(board[7][1], Knight, "white")
-		piece_test(board[7][6], Knight, "white")
-		piece_test(board[7][3], Queen, "white")
-		piece_test(board[7][4], King, "white")
+	def place_white_pieces
+		new_piece(board[7][0], Rook, "white")
+		new_piece(board[7][7], Rook, "white")
+		new_piece(board[7][2], Bishop, "white")
+		new_piece(board[7][5], Bishop, "white")
+		new_piece(board[7][1], Knight, "white")
+		new_piece(board[7][6], Knight, "white")
+		new_piece(board[7][3], Queen, "white")
+		new_piece(board[7][4], King, "white")
 
 		
 		(0..7).each do |x|
-			piece_test(board[6][x], Pawn, "white")
+			new_piece(board[6][x], Pawn, "white")
+		end
+	end
+
+	def place_black_pieces
+		new_piece(board[0][0], Rook, "black")
+		new_piece(board[0][7], Rook, "black")
+		new_piece(board[0][2], Bishop, "black")
+		new_piece(board[0][5], Bishop, "black")
+		new_piece(board[0][1], Knight, "black")
+		new_piece(board[0][6], Knight, "black")
+		new_piece(board[0][3], Queen, "black")
+		new_piece(board[0][4], King, "black")
+
+		
+		(0..7).each do |x|
+			new_piece(board[1][x], Pawn, "black")
 		end
 	end
 
 
-
-	def piece_test(cell, piece, color)
+	def new_piece(cell, piece, color)
 			
 		
 		cell.piece = piece.new(color)
@@ -283,25 +313,42 @@ def valid_input(move_choice)
 		cell.symbol = cell.piece.symbol
 	end
 
-	def move_test(old_cell, new_cell)
-		new_cell.piece = old_cell.piece
-		new_cell.symbol = new_cell.piece.symbol #need to update this automatically
+
+	def update_cell_new(cell, piece=0)
+			if piece == 0
+				cell.piece = 0
+				cell.symbol = ' '
+			else
+				cell.piece = piece 
+				cell.symbol = piece.symbol	
+			end
+		
+		
+	end
+
+	
+
+
+	def move_piece_new(old_cell, new_cell)
+		piece = old_cell.piece
+		update_cell_new(new_cell, piece)
 		empty_cell(old_cell)
 	end
 		
 end	
 
-
+=begin
 
 
 
 bob = BoardClass.new
 bob.draw_board
+bob.set_up_board
 
 #bob.piece_test(bob.board[7][0])
 
-bob.add_pieces_test
+#bob.add_pieces_test
 bob.draw_board
-bob.move_test(bob.board[7][0], bob.board[0][0])
+bob.move_piece_new(bob.board[7][0], bob.board[0][0])
 bob.draw_board
-
+=end
