@@ -7,6 +7,23 @@ class Piece
 
 	end
 
+	def move_check(move_array)
+		puts "parent method called"
+		true
+	end
+
+	def move_ok?(move_array, moves)
+		@valid = false
+		moves.each do |x|
+			x.each do |y|
+				if move_array == y 
+					@valid = true
+				end
+			end
+		end			
+	@valid
+	end
+
 
 end
 

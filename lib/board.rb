@@ -163,6 +163,7 @@ class BoardClass
 
 	def move_piece(old_cell, new_cell)
 		#is it here that I will keep memorary of move in case I have to take back.
+		puts old_cell.piece
 		piece = old_cell.piece
 		update_cell(new_cell, piece)
 		empty_cell(old_cell)
@@ -230,6 +231,27 @@ class BoardClass
 			7
 		end
 	end		
+
+
+	def legal_move(move_choice, color)
+		@coordinates = convert_choice(move_choice)
+		old_cell = board[@coordinates[0]][@coordinates[1]]
+		new_cell = board[@coordinates[2]][@coordinates[3]]
+		move_formula = move_formula([@coordinates[0], @coordinates[1]], [@coordinates[2], @coordinates[3]])
+		if old_cell.piece.move_check(move_formula) == false
+			puts "you can't move like that"
+			false
+		else
+			true
+		end	
+		
+
+	end	
+
+	def move_formula(old_cell, new_cell)
+		move_formula = [new_cell, old_cell].transpose.map { |y| y.reduce(:-)}
+		move_formula
+	end
 
 end	
 

@@ -31,6 +31,8 @@ class Game
 		
 		if @board.valid_move(move_choice, @player_turn.color) == false 
 			move_choice = get_choice		
+		elsif @board.legal_move(move_choice, @player_turn.color) == false
+			move_choice = get_choice 
 		end
 			move_choice
 	end	
