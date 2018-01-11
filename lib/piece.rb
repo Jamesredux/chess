@@ -13,13 +13,10 @@ class Piece
 	end
 
 	def move_ok?(move_array, moves)
-		puts move_array.inspect
-		puts moves.inspect
 		@valid = false
 		moves.each do |x|
 			x.each do |y|
 				if move_array == y 
-					puts  "same same"
 					@valid = true
 				end
 			end
