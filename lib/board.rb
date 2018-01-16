@@ -262,15 +262,100 @@ class BoardClass
 		if board[coordinates[0]][coordinates[1]].piece.instance_of? Knight 
 			true
 		elsif  coordinates[0] == coordinates[2] || coordinates[1] == coordinates[3]
-
 			puts "it s a straigh check my dudes"
+			straight_route(coordinates, move_formula)
+			
 
-			true
+			
 		elsif move_formula[0].abs == move_formula[1].abs
 			puts  "its a diag check my dudes"
-
-		  true
+			diagonal_route(coordinates, move_formula)
+		  
 		 end 	
+		
+	end
+
+
+	def straight_route(coordinates, move_formula)
+		if move_formula[0] == 0 
+			moves = move_formula[1].abs - 1
+			 horizontal_move(coordinates, move_formula, moves)
+		else
+			moves = move_formula[0].abs - 1
+			
+			vertical_move(coordinates, move_formula, moves)
+		end	
+	end
+
+	def horizontal_move(coordinates, move_formula, moves)
+		@clear_path = true
+		start_cell = coordinates[1]
+		move_direction = move_formula[1]/move_formula[1].abs
+		puts move_formula.inspect
+		puts "this is the move direction" 
+		puts  move_direction
+		moves.times do |x|
+			next_cell = start_cell + move_direction
+			if 
+			cell_empty(board[coordinates[0]][next_cell]) == false
+				@clear_path = false
+			end	
+			start_cell = next_cell
+		end
+		@clear_path
+	end
+
+	def vertical_move(coordinates, move_formula, moves)
+		@clear_path = true
+		start_cell = coordinates[0]
+		move_direction = move_formula[0]/move_formula[0].abs
+		puts move_formula.inspect
+		puts "this is the move direction" 
+		puts  move_direction
+		moves.times do |x|
+			next_cell = start_cell + move_direction
+			if 
+			cell_empty(board[next_cell][coordinates[1]]) == false
+				@clear_path = false
+			end	
+			start_cell = next_cell
+		end
+		@clear_path
+	end
+
+	def diagonal_route(coordinates, move_formula)
+		@clear_path = true
+		moves = move_formula[0].abs - 1
+		start_x = coordinates[0]
+		start_y = coordinates[1]
+		x_move = move_formula[0]/move_formula[0].abs
+		y_move = move_formula[1]/move_formula[1].abs
+
+		moves.times do |x|
+			next_x = start_x + x_move
+			next_y = start_y + y_move
+			if 
+				cell_empty(board[next_x][next_y]) == false
+				@clear_path = false
+			end
+			start_x = next_x
+			start_y = next_y
+
+		end	
+
+		@clear_path
+
+	end	
+
+	def cell_empty(cell)
+		puts cell.piece
+		puts "cell_empty called"
+		if cell.piece == 0
+			true
+		else
+			false
+		end		
+		
 		
 	end
 
