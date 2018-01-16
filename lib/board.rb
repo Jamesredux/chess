@@ -241,6 +241,10 @@ class BoardClass
 		if old_cell.piece.move_check(move_formula) == false
 			puts "you can't move like that"
 			false
+		elsif route_clear(old_cell, new_cell, @coordinates, move_formula) == false
+			puts "The route you selected is not clear"
+			false	
+			#next put a check to see if route is clear in seperate method
 		else
 			true
 		end	
@@ -251,6 +255,23 @@ class BoardClass
 	def move_formula(old_cell, new_cell)
 		move_formula = [new_cell, old_cell].transpose.map { |y| y.reduce(:-)}
 		move_formula
+	end
+
+	def route_clear(old_cell, new_cell, coordinates, move_formula)
+
+		if board[coordinates[0]][coordinates[1]].piece.instance_of? Knight 
+			true
+		elsif  coordinates[0] == coordinates[2] || coordinates[1] == coordinates[3]
+
+			puts "it s a straigh check my dudes"
+
+			true
+		elsif move_formula[0].abs == move_formula[1].abs
+			puts  "its a diag check my dudes"
+
+		  true
+		 end 	
+		
 	end
 
 end	

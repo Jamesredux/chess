@@ -33,6 +33,11 @@ class Pawn < Piece
 		
 	end	
 
+	def first_move_check
+		true
+		
+	end
+
 	
 
 end
