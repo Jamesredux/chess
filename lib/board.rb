@@ -87,7 +87,7 @@ class BoardClass
 			puts "You do not have a piece on that square."
 			false
 		elsif land_on_own_piece?(@coordinates, color) == false
-			puts "You can not move to a square you alreay occupy"
+			puts "You can not move to a square you already occupy"
 			false	 
 		else
 			true
@@ -163,7 +163,7 @@ class BoardClass
 
 	def move_piece(old_cell, new_cell)
 		#is it here that I will keep memorary of move in case I have to take back.
-		puts old_cell.piece
+		#puts old_cell.piece
 		piece = old_cell.piece
 		update_cell(new_cell, piece)
 		empty_cell(old_cell)
@@ -238,11 +238,11 @@ class BoardClass
 		old_cell = board[@coordinates[0]][@coordinates[1]]
 		new_cell = board[@coordinates[2]][@coordinates[3]]
 		move_formula = move_formula([@coordinates[0], @coordinates[1]], [@coordinates[2], @coordinates[3]])
-		if old_cell.piece.move_check(move_formula) == false
-			puts "you can't move like that"
+		if old_cell.piece.move_check(move_formula) == false   #include new_cell in arguement
+			puts "Invalid move for selected piece"
 			false
 		elsif route_clear(old_cell, new_cell, @coordinates, move_formula) == false
-			puts "The route you selected is not clear"
+			puts "The path you selected is obstructed by other pieces."
 			false	
 			#next put a check to see if route is clear in seperate method
 		else
@@ -262,13 +262,11 @@ class BoardClass
 		if board[coordinates[0]][coordinates[1]].piece.instance_of? Knight 
 			true
 		elsif  coordinates[0] == coordinates[2] || coordinates[1] == coordinates[3]
-			puts "it s a straigh check my dudes"
 			straight_route(coordinates, move_formula)
 			
 
 			
 		elsif move_formula[0].abs == move_formula[1].abs
-			puts  "its a diag check my dudes"
 			diagonal_route(coordinates, move_formula)
 		  
 		 end 	
@@ -291,9 +289,6 @@ class BoardClass
 		@clear_path = true
 		start_cell = coordinates[1]
 		move_direction = move_formula[1]/move_formula[1].abs
-		puts move_formula.inspect
-		puts "this is the move direction" 
-		puts  move_direction
 		moves.times do |x|
 			next_cell = start_cell + move_direction
 			if 
@@ -309,9 +304,6 @@ class BoardClass
 		@clear_path = true
 		start_cell = coordinates[0]
 		move_direction = move_formula[0]/move_formula[0].abs
-		puts move_formula.inspect
-		puts "this is the move direction" 
-		puts  move_direction
 		moves.times do |x|
 			next_cell = start_cell + move_direction
 			if 
@@ -348,8 +340,6 @@ class BoardClass
 	end	
 
 	def cell_empty(cell)
-		puts cell.piece
-		puts "cell_empty called"
 		if cell.piece == 0
 			true
 		else

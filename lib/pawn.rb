@@ -41,3 +41,8 @@ class Pawn < Piece
 	
 
 end
+
+#pawn just have array of moves, 
+# if one forward check cell empty
+# if two forward, check first move and cell empty
+# if diag, check taking conditions are satisfied + en passent.
