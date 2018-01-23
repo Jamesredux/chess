@@ -18,7 +18,7 @@ class King < Piece
 		@color == "white" ? "\u2654" : "\u265A"
 	end	
 
-	def move_check(move_array)
+	def move_check(move_array, new_cell)
 		move_ok?(move_array, KING_MOVE_SET)
 	end
 

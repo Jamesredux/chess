@@ -17,7 +17,7 @@ class Knight < Piece
 		@color == "white" ? "\u2658" : "\u265E"
 	end	
 
-	def move_check(move_array)
+	def move_check(move_array, new_cell)
 		move_ok?(move_array, KNIGHT_MOVE_SET)
 	end	
 

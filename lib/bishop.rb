@@ -16,7 +16,7 @@ class Bishop < Piece
 		@color == "white" ? "\u2657" : "\u265D"
 	end	
 
-	def move_check(move_array)
+	def move_check(move_array, new_cell)
 		move_ok?(move_array, BISHOP_MOVE_SET)
 	end
 

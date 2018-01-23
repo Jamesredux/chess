@@ -17,7 +17,7 @@ class Queen < Piece
 		@color == "white" ? "\u2655" : "\u265B"
 	end	
 
-	def move_check(move_array)
+	def move_check(move_array, new_cell)
 		move_ok?(move_array, QUEEN_MOVE_SET)
 	end	
 

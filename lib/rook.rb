@@ -17,7 +17,7 @@ class Rook < Piece
 		@color == "white" ? "\u2656" : "\u265C"
 	end	
 
-	def move_check(move_array)
+	def move_check(move_array, new_cell)
 		move_ok?(move_array, ROOK_MOVE_SET)
 	end	
 

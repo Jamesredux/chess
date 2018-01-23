@@ -238,7 +238,7 @@ class BoardClass
 		old_cell = board[@coordinates[0]][@coordinates[1]]
 		new_cell = board[@coordinates[2]][@coordinates[3]]
 		move_formula = move_formula([@coordinates[0], @coordinates[1]], [@coordinates[2], @coordinates[3]])
-		if old_cell.piece.move_check(move_formula) == false   #include new_cell in arguement
+		if old_cell.piece.move_check(move_formula, new_cell) == false   #include new_cell in arguement
 			puts "Invalid move for selected piece"
 			false
 		elsif route_clear(old_cell, new_cell, @coordinates, move_formula) == false
