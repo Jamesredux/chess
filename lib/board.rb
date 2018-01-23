@@ -86,7 +86,7 @@ class BoardClass
 		elsif players_piece?(@coordinates, color) == false
 			puts "You do not have a piece on that square."
 			false
-		elsif land_on_own_piece?(@coordinates, color) == false
+		elsif land_on_own_piece?(@coordinates, color) == false    #logically this should be in legal move
 			puts "You can not move to a square you already occupy"
 			false	 
 		else
@@ -155,6 +155,7 @@ class BoardClass
 	end
 
 	def update_board(move_choice)
+		puts "this is still being used"
 		coordinates = convert_choice(move_choice)
 		old_cell = board[coordinates[0]][coordinates[1]]
 		new_cell = board[coordinates[2]][coordinates[3]]

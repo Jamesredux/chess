@@ -6,6 +6,7 @@ class Player
 		@player_name = player_name
 		@color = color
 		@turn = 1
+		@in_check  = false
 
 	end
 
