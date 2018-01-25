@@ -7,23 +7,24 @@ module Draw
   BOTTOM_LINE = "  \u255A\u2550\u2550\u2569\u2550\u2550\u2569\u2550\u2550\u2569\u2550\u2550\u2569"\
 								"\u2550\u2550\u2569\u2550\u2550\u2569\u2550\u2550\u2569\u2550\u2550\u255D"
 								
-	BOTTOM_LABLE =	"   A  B  C  D  E  F  G  H"
+	LETTERS_LABLE =	"   A  B  C  D  E  F  G  H"
 
 	INTER_LINE =	"  \u2560\u2550\u2550\u256C\u2550\u2550\u256C\u2550\u2550\u256C\u2550"\
 							"\u2550\u256C\u2550\u2550\u256C\u2550\u2550\u256C\u2550\u2550\u256C\u2550\u2550\u2563" 								
 
 
  	def draw_board
+ 		puts LETTERS_LABLE
    	puts TOP_LINE
 
 		(0..6).each do |x|
 			row_number = row_convert(x)
-			create_row(@board[x], row_number)
+			create_row(@grid[x], row_number)
 			puts INTER_LINE
 		end
-			create_row(@board[7], 1)
+			create_row(@grid[7], 1)
 			puts BOTTOM_LINE
-			puts BOTTOM_LABLE
+			puts LETTERS_LABLE
 	end
 
 	def create_row(array, row_number)

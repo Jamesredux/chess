@@ -1,11 +1,13 @@
 require_relative 'board'
 require_relative 'player'
+require_relative 'chess'
 
 class Game
+	include Chess
 	attr_accessor :player_turn	
 
 	def new_game
-		@board = BoardClass.new
+		@board = Board.new
 		@board.draw_board
 	end
 
@@ -29,9 +31,9 @@ class Game
 	def get_choice
 		move_choice = gets.downcase.chomp
 		
-		if @board.valid_move(move_choice, @player_turn.color) == false 
+		if valid_move(move_choice, @player_turn.color) == false 
 			move_choice = get_choice		
-		elsif @board.legal_move(move_choice, @player_turn.color) == false
+		elsif legal_move(move_choice, @player_turn.color) == false
 			move_choice = get_choice 
 		end
 			move_choice
@@ -45,6 +47,9 @@ class Game
 		end
 	end
 
+	def test_1
+		put_board(0, 0)
+	end	
 end	
 
 
@@ -52,6 +57,7 @@ bob = Game.new
 bob.create_players
 bob.new_game
 bob.play_game
+bob.test_1
 	
 
 #new_position = [x.square, y].transpose.map { |y| y.reduce(:+)} 

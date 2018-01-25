@@ -1,80 +1,9 @@
-require_relative 'cell'
-require_relative 'draw'
-require_relative 'pawn'
-require_relative 'rook'
-require_relative 'queen'
-require_relative 'king'
-require_relative 'bishop'
-require_relative 'knight'
+require_relative 'board'
+#require_relative 'game'
+
+module Chess
 
 
-class Board
-	include Draw
-	
-	attr_accessor :grid
-
-	#initialize and set up
-
-	def initialize
-		@grid = create_grid
-		set_up_board
-	end
-
-	def create_grid
-		grid_array = []
-			8.times do  |y|
-				row_array = []
-					8.times do |x|
-					x = Cell.new
-					row_array<<x 
-					end
-				grid_array<< row_array
-			end		
-		grid_array
-	end	
-
-	def set_up_board
-		place_white_pieces
-		place_black_pieces		
-	end
-
-	def place_white_pieces
-		new_piece(grid[7][0], Rook, "white")
-		new_piece(grid[7][7], Rook, "white")
-		new_piece(grid[7][2], Bishop, "white")
-		new_piece(grid[7][5], Bishop, "white")
-		new_piece(grid[7][1], Knight, "white")
-		new_piece(grid[7][6], Knight, "white")
-		new_piece(grid[7][3], Queen, "white")
-		new_piece(grid[7][4], King, "white")
-		
-		(0..7).each do |x|
-			new_piece(grid[6][x], Pawn, "white")
-		end
-	end
-
-	def place_black_pieces
-		new_piece(grid[0][0], Rook, "black")
-		new_piece(grid[0][7], Rook, "black")
-		new_piece(grid[0][2], Bishop, "black")
-		new_piece(grid[0][5], Bishop, "black")
-		new_piece(grid[0][1], Knight, "black")
-		new_piece(grid[0][6], Knight, "black")
-		new_piece(grid[0][3], Queen, "black")
-		new_piece(grid[0][4], King, "black")
-
-		(0..7).each do |x|
-			new_piece(grid[1][x], Pawn, "black")
-		end
-	end
-
-	def new_piece(cell, piece, color)	
-		cell.piece = piece.new(color)
-		cell.symbol = cell.piece.symbol
-	end
-
-	#check moves
-=begin
 	def valid_move(move_choice, color)
 		@coordinates = convert_choice(move_choice)
 		if correct_length(move_choice) == false 
@@ -101,7 +30,7 @@ class Board
 	def players_piece?(coordinates, color)
 		x = coordinates[0]
 		y = coordinates[1]
-		if grid[x][y].piece == 0 || grid[x][y].piece.color != color
+		if @board.grid[x][y].piece == 0 || @board.grid[x][y].piece.color != color
 			false
 		else
 			true
@@ -111,10 +40,10 @@ class Board
 	def land_on_own_piece?(coordinates, color)   #incorporate this into legal move check - just add that last square is not own piece
 		x = coordinates[2]
 		y = coordinates[3]
-		if grid[x][y].piece == 0
+		if @board.grid[x][y].piece == 0
 			true
 		elsif 
-			grid[x][y].piece.color == color 
+			@board.grid[x][y].piece.color == color 
 		  false
 		else
 			true
@@ -133,10 +62,7 @@ class Board
 		 true
 		end
 	end 			
-=end
 
-
-=begin
 	def letters_ok(a,b)
 		letter_coords = ['a','b','c','d','e','f','g','h']
 
@@ -156,39 +82,9 @@ class Board
 			false	
 		end			 
 	end
-=end
-	def update_board(move_choice)
-		puts "this is still being used"
-		coordinates = convert_choice(move_choice)
-		old_cell = grid[coordinates[0]][coordinates[1]]
-		new_cell = grid[coordinates[2]][coordinates[3]]
-		move_piece(old_cell, new_cell)
-	end	
 
-	def move_piece(old_cell, new_cell)
-		#is it here that I will keep memorary of move in case I have to take back.
-		#puts old_cell.piece
-		piece = old_cell.piece
-		update_cell(new_cell, piece)
-		empty_cell(old_cell)
-	end
 
-	def update_cell(cell, piece=0)
-			if piece == 0
-				cell.piece = 0
-				cell.symbol = ' '
-			else
-				cell.piece = piece 
-				cell.symbol = piece.symbol	
-			end	
-	end
-
-	def empty_cell(cell) #just a simplified method for emptying a cell
-		update_cell(cell)
-	end
-	
-
-	def convert_choice(move_choice)
+def convert_choice(move_choice)
 		choice_array = move_choice.split('')
 		converted = []
 		choice_array.each do |x|
@@ -236,11 +132,11 @@ class Board
 		end
 	end		
 
-=begin
-	def legal_move(move_choice, color)
+
+def legal_move(move_choice, color)
 		@coordinates = convert_choice(move_choice)
-		old_cell = grid[@coordinates[0]][@coordinates[1]]
-		new_cell = grid[@coordinates[2]][@coordinates[3]]
+		old_cell = @board.grid[@coordinates[0]][@coordinates[1]]
+		new_cell = @board.grid[@coordinates[2]][@coordinates[3]]
 		move_formula = move_formula([@coordinates[0], @coordinates[1]], [@coordinates[2], @coordinates[3]])
 		if old_cell.piece.move_check(move_formula, new_cell) == false   #include new_cell in arguement
 			puts "Invalid move for selected piece"
@@ -263,7 +159,7 @@ class Board
 
 	def route_clear(old_cell, new_cell, coordinates, move_formula)
 
-		if grid[coordinates[0]][coordinates[1]].piece.instance_of? Knight 
+		if @board.grid[coordinates[0]][coordinates[1]].piece.instance_of? Knight 
 			true
 		elsif  coordinates[0] == coordinates[2] || coordinates[1] == coordinates[3]
 			straight_route(coordinates, move_formula)
@@ -296,7 +192,7 @@ class Board
 		moves.times do |x|
 			next_cell = start_cell + move_direction
 			if 
-			cell_empty(grid[coordinates[0]][next_cell]) == false
+			cell_empty(@board.grid[coordinates[0]][next_cell]) == false
 				@clear_path = false
 			end	
 			start_cell = next_cell
@@ -311,7 +207,7 @@ class Board
 		moves.times do |x|
 			next_cell = start_cell + move_direction
 			if 
-			cell_empty(grid[next_cell][coordinates[1]]) == false
+			cell_empty(@board.grid[next_cell][coordinates[1]]) == false
 				@clear_path = false
 			end	
 			start_cell = next_cell
@@ -331,7 +227,7 @@ class Board
 			next_x = start_x + x_move
 			next_y = start_y + y_move
 			if 
-				cell_empty(grid[next_x][next_y]) == false
+				cell_empty(@board.grid[next_x][next_y]) == false
 				@clear_path = false
 			end
 			start_x = next_x
@@ -352,6 +248,19 @@ class Board
 		
 		
 	end
-=end
-end	
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+end	
