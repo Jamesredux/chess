@@ -1,8 +1,8 @@
 require_relative 'board'
-#require_relative 'game'
+require_relative 'moves'
 
 module Chess
-
+	include Moves
 
 	def valid_move(move_choice, color)
 		@coordinates = convert_choice(move_choice)
@@ -12,7 +12,7 @@ module Chess
 		elsif valid_input(move_choice) == false
 			puts "Invalid input - please use the format B3H5"
 			false	
-		elsif players_piece?(@coordinates, color) == false
+		elsif players_piece?(@coordinates, color) == false  #move to legal move with land on own piece so won't have to call convert_choice in this method
 			puts "You do not have a piece on that square."
 			false
 		elsif land_on_own_piece?(@coordinates, color) == false    #logically this should be in legal move
@@ -27,7 +27,7 @@ module Chess
 		move_choice.size == 4? true :false
 	end
 
-	def players_piece?(coordinates, color)
+	def players_piece?(coordinates, color)  #reruse this with other methods
 		x = coordinates[0]
 		y = coordinates[1]
 		if @board.grid[x][y].piece == 0 || @board.grid[x][y].piece.color != color
@@ -250,15 +250,43 @@ def legal_move(move_choice, color)
 	end
 
 
+	def all_moves(color)
+		available_moves = Hash.new 
+
+		@board.grid.each_with_index do |row, index|
+			x_coord = index
+			row.each_with_index do |cell, index|
+				y_coord = index
+				if cell.piece == 0
+					next
+				elsif cell.piece.color == color
+				#	check_cell_move(cell)
+					available_moves[:cell] = cell.piece
+					map_moves(x_coord, y_coord, cell)
+					#here put the method that checks all available moves for this piece piece_moves = piece_move_check(square, piece, color)
+					# square = [x_coord, y_coord]
+					#available_moves<<square
+				else
+					next 
+				end			
+			end
+		end
+		available_moves.inspect
+	end	
 
 
+	def map_moves(x, y, cell)
+		
+		position = [x, y]
+		QUEEN_MOVE_SET.each do |direction|
+			direction.each do |move|
+					new_position = [position, move].transpose.map { |y| y.reduce(:+)}
+					puts new_position.inspect
+					puts @board.grid[new_position[0]][new_position[1]].piece
+				end
+			end
 
-
-
-
-
-
-
+	end		
 
 
 

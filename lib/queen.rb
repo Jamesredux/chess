@@ -1,6 +1,8 @@
 require './lib/piece.rb'
 require_relative 'moves'
 
+
+
 class Queen < Piece 
 	include Moves
 	attr_accessor :color, :symbol
@@ -20,5 +22,7 @@ class Queen < Piece
 	def move_check(move_array, new_cell)
 		move_ok?(move_array, QUEEN_MOVE_SET)
 	end	
+
+		
 
 end

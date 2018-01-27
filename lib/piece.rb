@@ -1,3 +1,5 @@
+require_relative 'board'
+
 class Piece
 
 	attr_accessor :color
@@ -23,6 +25,8 @@ class Piece
 		end			
 	@valid
 	end
+
+	
 
 
 end

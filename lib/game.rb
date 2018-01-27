@@ -4,7 +4,7 @@ require_relative 'chess'
 
 class Game
 	include Chess
-	attr_accessor :player_turn	
+	attr_accessor :player_turn, :board
 
 	def new_game
 		@board = Board.new
@@ -47,19 +47,17 @@ class Game
 		end
 	end
 
-	def test_1
-		put_board(0, 0)
-	end	
+	
 end	
 
 
 bob = Game.new
 bob.create_players
 bob.new_game
-bob.play_game
-bob.test_1
+#bob.play_game
+bob.all_moves('white')
 	
 
-#new_position = [x.square, y].transpose.map { |y| y.reduce(:+)} 
+
 
 

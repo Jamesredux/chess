@@ -19,6 +19,8 @@ class Pawn < Piece
 		@color == "white" ? "\u2659" : "\u265F"
 	end	
 
+	
+
 =begin
 	#need to look into moving this or move_ok? to parent class.
 	def move_check(move_array, new_cell)
