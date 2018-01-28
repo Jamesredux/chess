@@ -250,7 +250,7 @@ def legal_move(move_choice, color)
 	end
 
 
-	def all_available_moves(color)
+	def all_available_moves(color)  #this method won't take color when running in game
 		@all_available_moves = []
 		squares = squares_with_piece(color)
 		squares.each do |x|
@@ -294,21 +294,11 @@ def legal_move(move_choice, color)
 		if cell.piece.instance_of?(Pawn) && color == 'white'
 			white_pawn_moves(coordinates, cell)
 		elsif cell.piece.instance_of?(Pawn) && color == 'black'
-			black_pawn_moves(cell)
+			black_pawn_moves(coordinates, cell)
 		else
-			piece_moves(cell)
+			piece_moves(cell, coordinates, color)
 		end 		
 
-=begin		
-		position = [x, y]
-		QUEEN_MOVE_SET.each do |direction|
-			direction.each do |move|
-					new_position = [position, move].transpose.map { |y| y.reduce(:+)}
-					puts new_position.inspect
-					puts @board.grid[new_position[0]][new_position[1]].piece
-				end
-			end
-=end
 	end		
 
 	def white_pawn_moves(coordinates, cell)
@@ -331,8 +321,28 @@ def legal_move(move_choice, color)
 		
 	end
 
+	def black_pawn_moves(coordinates, cell)
+		forward_moves = [[1, 0], [2, 0]]
+		@route_clear = true
+			new_square = [coordinates, [1, 0]].transpose.map { |y| y.reduce(:+) }
+			pawn_square_check(new_square, false)
+				if @route_clear == true && cell.piece.first_move == true
+					new_square = [coordinates, [2, 0]].transpose.map { |y| y.reduce(:+) }
+					pawn_square_check(new_square, false)
+				end		
+		take_moves = [[1, -1], [1, 1]]
+				new_square = [coordinates, [1, -1]].transpose.map { |y| y.reduce(:+) }
+				pawn_square_check(new_square, true)
+				new_square = [coordinates, [1, 1]].transpose.map { |y| y.reduce(:+) }
+				pawn_square_check(new_square, true)
+	 
+	  #white_pawn_take_check(coordinates, cell)
+		
+		
+	end
+
 	def pawn_square_check(coordinates, can_take)
-		if square_off_board(coordinates) == false
+		if square_on_board(coordinates) == false
 		
 			@route_clear = false
 		else
@@ -340,7 +350,7 @@ def legal_move(move_choice, color)
 			if can_take == true
 			 if cell_empty(square)
 			   				
-			 elsif square.piece.color == 'black'
+			 elsif square.piece.color == 'white'
 			 	puts "this is a take move"
 			  	@all_available_moves<<coordinates
 			 end 	
@@ -351,16 +361,132 @@ def legal_move(move_choice, color)
 			end		
 		end
 	end
+	
 
-	def black_pawn_moves(coordinates, cell)
-		true
+	def piece_moves(cell, coordinates, color)
+		color == 'white' ? other_color = 'black': other_color = 'white'
+		piece = cell.piece
+
+		if piece.instance_of?(Rook) 
+			rook_moves(cell, coordinates, color)
+		elsif piece.instance_of?(Knight)
+			knight_moves(cell, coordinates, color)
+		elsif piece.instance_of?(Bishop)
+			bishop_moves(cell, coordinates, color)
+		elsif piece.instance_of?(Queen)
+			queen_moves(cell, coordinates, color)
+		elsif piece.instance_of?(King)
+			king_moves(cell, coordinates, color)	
+		end				
+
+
+
+
+=begin		
+		position = [x, y]
+		QUEEN_MOVE_SET.each do |direction|
+			direction.each do |move|
+					new_position = [position, move].transpose.map { |y| y.reduce(:+)}
+					puts new_position.inspect
+					puts @board.grid[new_position[0]][new_position[1]].piece
+				end
+			end
+=end
 	end	
 
-	def piece_moves(cell)
-		#puts cell.piece.piecetest
-	end	
+	def rook_moves(cell, coordinates, color)
+		#ROOK_MOVE_SET = [VERT_UP, VERT_DOWN, HORIZ_EAST, HORIZ_WEST	]
+		#	VERT_DOWN = [[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[7,0]]
+		#	VERT_UP = [[-1,0],[-2,0],[-3,0],[-4,0],[-5,0],[-6,0],[-7,0]]
+		#	HORIZ_EAST = [[0,1],[0,2],[0,3],[0,4],[0,5],[0,6],[0,7]]
+		#	HORIZ_WEST = [[0,-1],[0,-2],[0,-3],[0,-4],[0,-5],[0,-6],[0,-7]]
+		rook_move_set = [[1,0],[-1,0], [0,1], [0, -1]]
+			rook_move_set.each do |move|
+				start_square = coordinates
+				@clear_path =true
+				while @clear_path
+					
+						new_position = [start_square, move].transpose.map { |y| y.reduce(:+)}
+							if square_check(new_position, color) == false
+								@clear_path = false
+							elsif take_square(new_position, color) == true
+								@all_available_moves<<new_position
+								@clear_path = false
+									
+							else
+								@all_available_moves<<new_position
+								start_square = new_position	
+							end	
+								
 
-	def square_off_board(coordinates)
+				end 	
+			end			
+	end
+
+
+
+	def knight_moves(cell, coordinates, color)
+				knight_move_set = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]
+				
+				knight_move_set.each do |move|
+					start_square = coordinates
+					new_position  = [start_square, move].transpose.map { |y| y.reduce(:+)}
+						if square_check(new_position, color) == false
+							next 
+						elsif take_square(new_position, color) == true
+							puts "a take"
+							@all_available_moves<<new_position
+						else
+							@all_available_moves<<new_position
+						end
+				end				
+								
+	end
+
+	def square_check(coordinates, color)
+		if square_on_board(coordinates) == false
+		 false
+
+		else
+		 	square = @board.grid[coordinates[0]][coordinates[1]]	
+				if cell_empty(square)
+					true
+				elsif square.piece.color == color
+			 	 puts "blocked"
+			    false
+			  end 	
+		end
+	end
+
+	def take_square(coordinates, color)  #need to add where you can't take king
+			square = @board.grid[coordinates[0]][coordinates[1]]	
+				if cell_empty(square)
+					false
+				elsif square.piece.color != color
+			 	 puts "take"
+			    true
+			  end 			
+
+	end	
+	
+
+
+
+
+
+	def bishop_moves(cell, coordinates, other_color)
+		puts "bishop"
+	end
+
+	def queen_moves(cell, coordinates, other_color)
+		puts "queen"
+	end
+
+	def king_moves(cell, coordinates, other_color)
+		puts "king"
+	end
+
+	def square_on_board(coordinates)
 		if coordinates[0] < 0 || coordinates[0] > 7
 			false
 		elsif coordinates[1] < 0 || coordinates[1] > 7
