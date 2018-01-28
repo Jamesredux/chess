@@ -1,10 +1,11 @@
+
 require_relative 'board'
 
 class Piece
 
 	attr_accessor :color
 
-	def initialize(color)
+	def initialize(color=0)
 		@color = color
 
 	end
@@ -26,7 +27,10 @@ class Piece
 	@valid
 	end
 
-	
+	def piecetest
+		puts 'test'
+		puts Board.grid
+	end	
 
 
 end

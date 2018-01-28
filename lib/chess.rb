@@ -250,8 +250,21 @@ def legal_move(move_choice, color)
 	end
 
 
-	def all_moves(color)
-		available_moves = Hash.new 
+	def all_available_moves(color)
+		@all_available_moves = []
+		squares = squares_with_piece(color)
+		squares.each do |x|
+			map_moves(x, color)
+		end
+
+		puts @all_available_moves.inspect
+
+	end	
+
+
+
+	def squares_with_piece(color)
+		@location_of_pieces = []
 
 		@board.grid.each_with_index do |row, index|
 			x_coord = index
@@ -260,23 +273,33 @@ def legal_move(move_choice, color)
 				if cell.piece == 0
 					next
 				elsif cell.piece.color == color
-				#	check_cell_move(cell)
-					available_moves[:cell] = cell.piece
-					map_moves(x_coord, y_coord, cell)
-					#here put the method that checks all available moves for this piece piece_moves = piece_move_check(square, piece, color)
-					# square = [x_coord, y_coord]
-					#available_moves<<square
+						square = [x_coord, y_coord]
+						@location_of_pieces<<square
 				else
 					next 
 				end			
 			end
 		end
-		available_moves.inspect
+		@location_of_pieces
 	end	
 
-
-	def map_moves(x, y, cell)
+	def piece_check(coordinates, color)
+		puts @board.grid[coordinates[0]][coordinates[1]].piece 
 		
+	end
+
+
+	def map_moves(coordinates, color)
+		cell = @board.grid[coordinates[0]][coordinates[1]]
+		if cell.piece.instance_of?(Pawn) && color == 'white'
+			white_pawn_moves(coordinates, cell)
+		elsif cell.piece.instance_of?(Pawn) && color == 'black'
+			black_pawn_moves(cell)
+		else
+			piece_moves(cell)
+		end 		
+
+=begin		
 		position = [x, y]
 		QUEEN_MOVE_SET.each do |direction|
 			direction.each do |move|
@@ -285,10 +308,68 @@ def legal_move(move_choice, color)
 					puts @board.grid[new_position[0]][new_position[1]].piece
 				end
 			end
-
+=end
 	end		
 
+	def white_pawn_moves(coordinates, cell)
+		forward_moves = [[-1, 0], [-2, 0]]
+		@route_clear = true
+			new_square = [coordinates, [-1, 0]].transpose.map { |y| y.reduce(:+) }
+			pawn_square_check(new_square, false)
+				if @route_clear == true && cell.piece.first_move == true
+					new_square = [coordinates, [-2, 0]].transpose.map { |y| y.reduce(:+) }
+					pawn_square_check(new_square, false)
+				end		
+		take_moves = [[-1, -1], [-1, 1]]
+				new_square = [coordinates, [-1, -1]].transpose.map { |y| y.reduce(:+) }
+				pawn_square_check(new_square, true)
+				new_square = [coordinates, [-1, 1]].transpose.map { |y| y.reduce(:+) }
+				pawn_square_check(new_square, true)
+	 
+	  #white_pawn_take_check(coordinates, cell)
+		
+		
+	end
+
+	def pawn_square_check(coordinates, can_take)
+		if square_off_board(coordinates) == false
+		
+			@route_clear = false
+		else
+		 square = @board.grid[coordinates[0]][coordinates[1]]	
+			if can_take == true
+			 if cell_empty(square)
+			   				
+			 elsif square.piece.color == 'black'
+			 	puts "this is a take move"
+			  	@all_available_moves<<coordinates
+			 end 	
+			elsif cell_empty(square) 
+				@all_available_moves<<coordinates
+			else
+				@route_clear = false
+			end		
+		end
+	end
+
+	def black_pawn_moves(coordinates, cell)
+		true
+	end	
+
+	def piece_moves(cell)
+		#puts cell.piece.piecetest
+	end	
+
+	def square_off_board(coordinates)
+		if coordinates[0] < 0 || coordinates[0] > 7
+			false
+		elsif coordinates[1] < 0 || coordinates[1] > 7
+			false	
+		else
+			true
+		end
 
 
+	end	
 
 end	

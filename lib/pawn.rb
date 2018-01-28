@@ -4,7 +4,7 @@ require_relative 'moves'
 
 class Pawn < Piece 
 	include Moves
-	attr_accessor :color, :symbol
+	attr_accessor :color, :symbol, :first_move
 		WHITE_PAWN_MOVE_SET = [[VERT_UP[0]], [DIAG_UP_EAST[0]], [DIAG_UP_WEST[0]]]  #not using this at present
 		BLACK_PAWN_MOVE_SET = [[VERT_DOWN[0]], [DIAG_DOWN_EAST[0]], [DIAG_DOWN_WEST[0]]]
 
