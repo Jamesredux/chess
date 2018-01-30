@@ -7,6 +7,7 @@ class Piece
 
 	def initialize(color=0)
 		@color = color
+		@moves = []
 
 	end
 
