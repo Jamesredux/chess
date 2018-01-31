@@ -179,7 +179,8 @@ class Board
 				cell.symbol = ' '
 			else
 				cell.piece = piece 
-				cell.symbol = piece.symbol	
+				cell.symbol = piece.symbol
+				cell.piece.first_move = false	
 			end	
 	end
 

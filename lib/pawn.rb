@@ -12,7 +12,7 @@ class Pawn < Piece
 	def initialize(color)
 		super
 		@symbol = find_symbol
-		@first_move = true #still has first move
+		#@first_move = true #still has first move
 	end
 
 	def find_symbol

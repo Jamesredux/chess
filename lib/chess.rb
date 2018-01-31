@@ -137,6 +137,16 @@ def legal_move(move_choice, color)
 		@coordinates = convert_choice(move_choice)
 		old_cell = @board.grid[@coordinates[0]][@coordinates[1]]
 		new_cell = @board.grid[@coordinates[2]][@coordinates[3]]
+		all_available_moves(color)
+		new_coordinates = [@coordinates[2], @coordinates[3]]
+		if old_cell.piece.moves.include?(new_coordinates)
+			true
+		else
+			puts "That is an invalid move"
+			false
+		end
+		
+=begin			
 		move_formula = move_formula([@coordinates[0], @coordinates[1]], [@coordinates[2], @coordinates[3]])
 		if old_cell.piece.move_check(move_formula, new_cell) == false   #include new_cell in arguement
 			puts "Invalid move for selected piece"
@@ -149,7 +159,7 @@ def legal_move(move_choice, color)
 			true
 		end	
 		
-
+=end
 	end	
 
 	def move_formula(old_cell, new_cell)
@@ -251,13 +261,14 @@ def legal_move(move_choice, color)
 
 
 	def all_available_moves(color)  #this method won't take color when running in game
-		@all_available_moves = []
+		#@all_available_moves = []
 		squares = squares_with_piece(color)
 		squares.each do |x|
 			map_moves(x, color)
 		end
 
-		puts @all_available_moves.inspect
+		
+		#puts @all_available_moves.inspect
 
 	end	
 
@@ -302,6 +313,7 @@ def legal_move(move_choice, color)
 	end		
 
 	def white_pawn_moves(coordinates, cell)
+			cell.piece.moves = []
 			white_pawn_take_set =  [[-1,-1], [-1, 1]]
 			@route_clear = true
 				while @route_clear
@@ -309,13 +321,13 @@ def legal_move(move_choice, color)
 						 if pawn_square_check(new_square, false, 'white') == false
 						 	@route_clear = false
 						 elsif cell.piece.first_move == false
-						 	@all_available_moves<<new_square
+						 	cell.piece.moves<<new_square
 						 	@route_clear = false
 						 else
-						 	@all_available_moves<<new_square
+						 	cell.piece.moves<<new_square
 						 		new_square = [coordinates, [-2, 0]].transpose.map { |y| y.reduce(:+) }	 
 						 			 if  pawn_square_check(new_square, false, 'white') == true
-						 			 	@all_available_moves<<new_square
+						 			 	cell.piece.moves<<new_square
 						 			 end
 						 			@route_clear = false
 						 	end		 
@@ -324,7 +336,7 @@ def legal_move(move_choice, color)
 			white_pawn_take_set.each do |move|
 				new_square = [coordinates, move].transpose.map {  |y| y.reduce(:+) }
 				 if pawn_square_check(new_square, true, 'white')	== true
-				 	@all_available_moves<<new_square
+				 	cell.piece.moves<<new_square
 				 end
 			end
 	end
@@ -338,15 +350,13 @@ def legal_move(move_choice, color)
 						 if pawn_square_check(new_square, false, 'black') == false
 						 	@route_clear = false
 						 elsif cell.piece.first_move == false
-						 	@all_available_moves<<new_square
+						 	
 						 	cell.piece.moves<<new_square
 						 	@route_clear = false
 						 else
 						 	cell.piece.moves<<new_square
-						 	@all_available_moves<<new_square
 						 		new_square = [coordinates, [2, 0]].transpose.map { |y| y.reduce(:+) }	 
 						 			 if  pawn_square_check(new_square, false, 'black') == true
-						 			 	@all_available_moves<<new_square
 						 			 	cell.piece.moves<<new_square   #this is an experiment
 						 			 end
 						 			@route_clear = false
@@ -356,7 +366,7 @@ def legal_move(move_choice, color)
 			black_pawn_take_set.each do |move|
 				new_square = [coordinates, move].transpose.map {  |y| y.reduce(:+) }
 				 if pawn_square_check(new_square, true, 'black')	== true
-				 	@all_available_moves<<new_square
+				 	cell.piece.moves<<new_square
 				 end
 			end
 			puts cell.piece.moves.inspect
@@ -401,6 +411,7 @@ def legal_move(move_choice, color)
 	end	
 
 	def rook_moves(cell, coordinates, color)
+		cell.piece.moves = []
 		rook_move_set = [[1,0],[-1,0], [0,1], [0, -1]]
 			rook_move_set.each do |move|
 				start_square = coordinates
@@ -411,11 +422,11 @@ def legal_move(move_choice, color)
 							if square_check(new_position, color) == false
 								@clear_path = false
 							elsif take_square(new_position, color) == true
-								@all_available_moves<<new_position
+								cell.piece.moves<<new_position
 								@clear_path = false
 									
 							else
-								@all_available_moves<<new_position
+								cell.piece.moves<<new_position
 								start_square = new_position	
 							end	
 								
@@ -427,6 +438,7 @@ def legal_move(move_choice, color)
 
 
 	def knight_moves(cell, coordinates, color)
+			cell.piece.moves = []
 				knight_move_set = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]
 				
 				knight_move_set.each do |move|
@@ -436,15 +448,16 @@ def legal_move(move_choice, color)
 							next 
 						elsif take_square(new_position, color) == true
 							puts "a take"
-							@all_available_moves<<new_position
+							cell.piece.moves<<new_position
 						else
-							@all_available_moves<<new_position
+							cell.piece.moves<<new_position
 						end
 				end				
 								
 	end
 
 	def bishop_moves(cell, coordinates, color)
+		cell.piece.moves = []
 		bishop_move_set = [[1,1],[-1,-1], [-1, 1], [1, -1]]
 			bishop_move_set.each do |move|
 				start_square = coordinates
@@ -455,11 +468,11 @@ def legal_move(move_choice, color)
 							if square_check(new_position, color) == false
 								@clear_path = false
 							elsif take_square(new_position, color) == true
-								@all_available_moves<<new_position
+								cell.piece.moves<<new_position
 								@clear_path = false
 									
 							else
-								@all_available_moves<<new_position
+								cell.piece.moves<<new_position
 								start_square = new_position	
 							end	
 								
@@ -469,6 +482,7 @@ def legal_move(move_choice, color)
 	end
 
 	def queen_moves(cell, coordinates, color)
+		cell.piece.moves = []
 		queen_move_set = [[1,1],[-1,-1], [-1, 1], [1, -1],[1,0],[-1,0], [0,1], [0, -1]]
 			queen_move_set.each do |move|
 				start_square = coordinates
@@ -479,11 +493,11 @@ def legal_move(move_choice, color)
 							if square_check(new_position, color) == false
 								@clear_path = false
 							elsif take_square(new_position, color) == true
-								@all_available_moves<<new_position
+								cell.piece.moves<<new_position
 								@clear_path = false
 									
 							else
-								@all_available_moves<<new_position
+								cell.piece.moves<<new_position
 								start_square = new_position	
 							end	
 								
@@ -493,6 +507,7 @@ def legal_move(move_choice, color)
 	end
 
 	def king_moves(cell, coordinates, color)
+		cell.piece.moves = []
 		king_move_set = [[1,1],[-1,-1], [-1, 1], [1, -1],[1,0],[-1,0], [0,1], [0, -1]]
 			king_move_set.each do |move|
 				start_square = coordinates
@@ -500,9 +515,9 @@ def legal_move(move_choice, color)
 							if square_check(new_position, color) == false
 								next
 							elsif take_square(new_position, color) == true
-								@all_available_moves<<new_position
+								cell.piece.moves<<new_position
 							else
-								@all_available_moves<<new_position	
+								cell.piece.moves<<new_position	
 							end	
 								
 	

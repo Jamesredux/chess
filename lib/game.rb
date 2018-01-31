@@ -54,9 +54,9 @@ end
 bob = Game.new
 bob.create_players
 bob.new_game
-#bob.play_game
-bob.all_available_moves('white')
-bob.all_available_moves('black')
+bob.play_game
+#bob.all_available_moves('white')
+#bob.all_available_moves('black')
 
 	
 
