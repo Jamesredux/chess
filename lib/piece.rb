@@ -3,7 +3,7 @@ require_relative 'board'
 
 class Piece
 
-	attr_accessor :color
+	attr_accessor :color, :moves
 
 	def initialize(color=0)
 		@color = color

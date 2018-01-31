@@ -330,6 +330,7 @@ def legal_move(move_choice, color)
 	end
 
 	def black_pawn_moves(coordinates, cell)
+			cell.piece.moves = []
 			black_pawn_take_set =  [[1,-1], [1, 1]]
 			@route_clear = true
 				while @route_clear
@@ -338,12 +339,15 @@ def legal_move(move_choice, color)
 						 	@route_clear = false
 						 elsif cell.piece.first_move == false
 						 	@all_available_moves<<new_square
+						 	cell.piece.moves<<new_square
 						 	@route_clear = false
 						 else
+						 	cell.piece.moves<<new_square
 						 	@all_available_moves<<new_square
 						 		new_square = [coordinates, [2, 0]].transpose.map { |y| y.reduce(:+) }	 
 						 			 if  pawn_square_check(new_square, false, 'black') == true
 						 			 	@all_available_moves<<new_square
+						 			 	cell.piece.moves<<new_square   #this is an experiment
 						 			 end
 						 			@route_clear = false
 						 	end		 
@@ -355,6 +359,7 @@ def legal_move(move_choice, color)
 				 	@all_available_moves<<new_square
 				 end
 			end
+			puts cell.piece.moves.inspect
 	end
 
 		def pawn_square_check(coordinates, can_take, color)
@@ -375,25 +380,7 @@ def legal_move(move_choice, color)
 		end
 	end
 
-=begin
-	def black_pawn_moves(coordinates, cell)
-		forward_moves = [[1, 0], [2, 0]]
-		@route_clear = true
-			new_square = [coordinates, [1, 0]].transpose.map { |y| y.reduce(:+) }
-			pawn_square_check(new_square, false)
-				if @route_clear == true && cell.piece.first_move == true
-					new_square = [coordinates, [2, 0]].transpose.map { |y| y.reduce(:+) }
-					pawn_square_check(new_square, false)
-				end		
-		take_moves = [[1, -1], [1, 1]]
-				new_square = [coordinates, [1, -1]].transpose.map { |y| y.reduce(:+) }
-				pawn_square_check(new_square, true)
-				new_square = [coordinates, [1, 1]].transpose.map { |y| y.reduce(:+) }
-				pawn_square_check(new_square, true)		
-	end
-=end
 
-	
 
 	def piece_moves(cell, coordinates, color)
 		color == 'white' ? other_color = 'black': other_color = 'white'
@@ -547,16 +534,6 @@ def legal_move(move_choice, color)
 			  end 			
 
 	end	
-	
-
-
-
-
-
-	
-
-	
-
 	
 
 	def square_on_board(coordinates)
