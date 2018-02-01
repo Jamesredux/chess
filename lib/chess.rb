@@ -1,8 +1,7 @@
 require_relative 'board'
-require_relative 'moves'
 
 module Chess
-	include Moves
+	
 
 	def valid_move(move_choice, color)
 		@coordinates = convert_choice(move_choice)
@@ -145,109 +144,10 @@ def legal_move(move_choice, color)
 			puts "That is an invalid move"
 			false
 		end
-		
-=begin			
-		move_formula = move_formula([@coordinates[0], @coordinates[1]], [@coordinates[2], @coordinates[3]])
-		if old_cell.piece.move_check(move_formula, new_cell) == false   #include new_cell in arguement
-			puts "Invalid move for selected piece"
-			false
-		elsif route_clear(old_cell, new_cell, @coordinates, move_formula) == false
-			puts "The path you selected is obstructed by other pieces."
-			false	
-			#next put a check to see if route is clear in seperate method
-		else
-			true
-		end	
-		
-=end
+				
 	end	
 
-	def move_formula(old_cell, new_cell)
-		move_formula = [new_cell, old_cell].transpose.map { |y| y.reduce(:-)}
-		move_formula
-	end
 
-	def route_clear(old_cell, new_cell, coordinates, move_formula)
-
-		if @board.grid[coordinates[0]][coordinates[1]].piece.instance_of? Knight 
-			true
-		elsif  coordinates[0] == coordinates[2] || coordinates[1] == coordinates[3]
-			straight_route(coordinates, move_formula)
-			
-
-			
-		elsif move_formula[0].abs == move_formula[1].abs
-			diagonal_route(coordinates, move_formula)
-		  
-		 end 	
-		
-	end
-
-
-	def straight_route(coordinates, move_formula)
-		if move_formula[0] == 0 
-			moves = move_formula[1].abs - 1
-			 horizontal_move(coordinates, move_formula, moves)
-		else
-			moves = move_formula[0].abs - 1
-			
-			vertical_move(coordinates, move_formula, moves)
-		end	
-	end
-
-	def horizontal_move(coordinates, move_formula, moves)
-		@clear_path = true
-		start_cell = coordinates[1]
-		move_direction = move_formula[1]/move_formula[1].abs
-		moves.times do |x|
-			next_cell = start_cell + move_direction
-			if 
-			cell_empty(@board.grid[coordinates[0]][next_cell]) == false
-				@clear_path = false
-			end	
-			start_cell = next_cell
-		end
-		@clear_path
-	end
-
-	def vertical_move(coordinates, move_formula, moves)
-		@clear_path = true
-		start_cell = coordinates[0]
-		move_direction = move_formula[0]/move_formula[0].abs
-		moves.times do |x|
-			next_cell = start_cell + move_direction
-			if 
-			cell_empty(@board.grid[next_cell][coordinates[1]]) == false
-				@clear_path = false
-			end	
-			start_cell = next_cell
-		end
-		@clear_path
-	end
-
-	def diagonal_route(coordinates, move_formula)
-		@clear_path = true
-		moves = move_formula[0].abs - 1
-		start_x = coordinates[0]
-		start_y = coordinates[1]
-		x_move = move_formula[0]/move_formula[0].abs
-		y_move = move_formula[1]/move_formula[1].abs
-
-		moves.times do |x|
-			next_x = start_x + x_move
-			next_y = start_y + y_move
-			if 
-				cell_empty(@board.grid[next_x][next_y]) == false
-				@clear_path = false
-			end
-			start_x = next_x
-			start_y = next_y
-
-		end	
-
-		@clear_path
-
-	end	
 
 	def cell_empty(cell)
 		if cell.piece == 0
@@ -261,15 +161,13 @@ def legal_move(move_choice, color)
 
 
 	def all_available_moves(color)  #this method won't take color when running in game
-		#@all_available_moves = []
+		@sum_of_moves = 0 #counter that goes up every time a move is added - if it stays at 0 then stalemate/checkmate
+		#haven't finished this, would it be better to run a method for all piece moves to see it they are all empty.?
 		squares = squares_with_piece(color)
 		squares.each do |x|
 			map_moves(x, color)
 		end
-
-		
-		#puts @all_available_moves.inspect
-
+		puts "this is the number of moves = #{@sum_of_moves}"
 	end	
 
 
@@ -322,12 +220,15 @@ def legal_move(move_choice, color)
 						 	@route_clear = false
 						 elsif cell.piece.first_move == false
 						 	cell.piece.moves<<new_square
+						 	@sum_of_moves+= 1
 						 	@route_clear = false
 						 else
 						 	cell.piece.moves<<new_square
+						 	@sum_of_moves += 1
 						 		new_square = [coordinates, [-2, 0]].transpose.map { |y| y.reduce(:+) }	 
 						 			 if  pawn_square_check(new_square, false, 'white') == true
 						 			 	cell.piece.moves<<new_square
+						 			 	@sum_of_moves += 1
 						 			 end
 						 			@route_clear = false
 						 	end		 
@@ -337,6 +238,7 @@ def legal_move(move_choice, color)
 				new_square = [coordinates, move].transpose.map {  |y| y.reduce(:+) }
 				 if pawn_square_check(new_square, true, 'white')	== true
 				 	cell.piece.moves<<new_square
+				 	@sum_of_moves+= 1
 				 end
 			end
 	end
@@ -352,12 +254,15 @@ def legal_move(move_choice, color)
 						 elsif cell.piece.first_move == false
 						 	
 						 	cell.piece.moves<<new_square
+						 	@sum_of_moves+= 1
 						 	@route_clear = false
 						 else
 						 	cell.piece.moves<<new_square
+						 	@sum_of_moves += 1
 						 		new_square = [coordinates, [2, 0]].transpose.map { |y| y.reduce(:+) }	 
 						 			 if  pawn_square_check(new_square, false, 'black') == true
-						 			 	cell.piece.moves<<new_square   #this is an experiment
+						 			 	cell.piece.moves<<new_square
+						 			 	@sum_of_moves+= 1
 						 			 end
 						 			@route_clear = false
 						 	end		 
@@ -367,9 +272,9 @@ def legal_move(move_choice, color)
 				new_square = [coordinates, move].transpose.map {  |y| y.reduce(:+) }
 				 if pawn_square_check(new_square, true, 'black')	== true
 				 	cell.piece.moves<<new_square
+				 	@sum_of_moves+= 1
 				 end
 			end
-			puts cell.piece.moves.inspect
 	end
 
 		def pawn_square_check(coordinates, can_take, color)
@@ -423,10 +328,12 @@ def legal_move(move_choice, color)
 								@clear_path = false
 							elsif take_square(new_position, color) == true
 								cell.piece.moves<<new_position
+								@sum_of_moves += 1
 								@clear_path = false
 									
 							else
 								cell.piece.moves<<new_position
+								@sum_of_moves += 1
 								start_square = new_position	
 							end	
 								
@@ -447,7 +354,6 @@ def legal_move(move_choice, color)
 						if square_check(new_position, color) == false
 							next 
 						elsif take_square(new_position, color) == true
-							puts "a take"
 							cell.piece.moves<<new_position
 						else
 							cell.piece.moves<<new_position
