@@ -4,7 +4,7 @@ module Chess
 	
 
 	def valid_move(move_choice, color)
-		@coordinates = convert_choice(move_choice)
+		@coordinates = convert_choice(move_choice) 
 		if correct_length(move_choice) == false 
 			puts "Incorrect input! Please only input 4 characters eg. A6A5"
 			false
