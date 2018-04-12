@@ -8,6 +8,7 @@ class Cell
 		@symbol = " "
 		@piece = 0
 		#@piece_color = nil
+		@enpassant = false
 	end	
 
 

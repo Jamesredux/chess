@@ -84,6 +84,8 @@ class Board
 	def move_piece(old_cell, new_cell)
 		#is it here that I will keep memorary of move in case I have to take back.
 		#puts old_cell.piece
+		#also possible en passant check if piece is pawn and first move is false then run
+		#en passant check
 		piece = old_cell.piece
 		update_cell(new_cell, piece)
 		empty_cell(old_cell)

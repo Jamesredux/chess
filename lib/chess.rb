@@ -234,6 +234,7 @@ def legal_move(move_choice, color)
 						 	end		 
 				end 
 
+ 	#in here I will have to put a method that adds the possible moves if there is an en passant take available
 			white_pawn_take_set.each do |move|
 				new_square = [coordinates, move].transpose.map {  |y| y.reduce(:+) }
 				 if pawn_square_check(new_square, true, 'white')	== true
@@ -268,6 +269,7 @@ def legal_move(move_choice, color)
 						 	end		 
 				end 
 
+				#in here I will have to put a method that adds the possible moves if there is an en passant take available
 			black_pawn_take_set.each do |move|
 				new_square = [coordinates, move].transpose.map {  |y| y.reduce(:+) }
 				 if pawn_square_check(new_square, true, 'black')	== true
@@ -285,7 +287,13 @@ def legal_move(move_choice, color)
 				cell_empty(square) ? true : false
 		 
 			else
+			#if square.enpass = true then return true? would that work?
+			#would the only pawns that were looking to move into the square during this method
+			#be ones that had the right to take en pass I think so. remember that this method is just listing the available 
+			#moves
+				
 			 if cell_empty(square)
+
 			   	false			
 			 elsif square.piece.instance_of?(King)
 			 		false
