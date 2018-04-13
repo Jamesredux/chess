@@ -371,6 +371,7 @@ def legal_move(move_choice, color)
 	end
 
 	def bishop_moves(cell, coordinates, color)
+		puts  "bishop_moves called"
 		cell.piece.moves = []
 		bishop_move_set = [[1,1],[-1,-1], [-1, 1], [1, -1]]
 			bishop_move_set.each do |move|
@@ -381,13 +382,15 @@ def legal_move(move_choice, color)
 						new_position = [start_square, move].transpose.map { |y| y.reduce(:+)}
 							if square_check(new_position, color) == false
 								@clear_path = false
+								
 							elsif take_square(new_position, color) == true
+								puts "take_square returned"
 								cell.piece.moves<<new_position
 								@clear_path = false
-									
 							else
 								cell.piece.moves<<new_position
 								start_square = new_position	
+							
 							end	
 								
 
@@ -448,6 +451,9 @@ def legal_move(move_choice, color)
 					true
 				elsif square.piece.color == color
 			    false
+			  elsif square.piece.instance_of?(King)
+			  	puts "king here sweety"
+			  	false  
 			  end 	
 		end
 	end
@@ -457,6 +463,7 @@ def legal_move(move_choice, color)
 				if cell_empty(square)
 					false
 				elsif square.piece.instance_of?(King)
+					puts "king take"
 					false	
 				elsif square.piece.color != color 
 			    true

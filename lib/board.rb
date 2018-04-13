@@ -13,8 +13,6 @@ class Board
 	
 	attr_accessor :grid
 
-	#initialize and set up
-
 	def initialize
 		@grid = create_grid
 		set_up_board
@@ -60,7 +58,7 @@ class Board
 		new_piece(grid[0][5], Bishop, "black")
 		new_piece(grid[0][1], Knight, "black")
 		new_piece(grid[0][6], Knight, "black")
-		new_piece(grid[0][3], Queen, "black")
+		new_piece(grid[0][3], Queen, "black") 		
 		new_piece(grid[0][4], King, "black")
 
 		(0..7).each do |x|
@@ -68,8 +66,8 @@ class Board
 		end
 	end
 
-	def new_piece(cell, piece, color)	
-		cell.piece = piece.new(color)
+	def new_piece(cell, piece_name, color)	
+		cell.piece = piece_name.new(color)
 		cell.symbol = cell.piece.symbol
 	end
 
