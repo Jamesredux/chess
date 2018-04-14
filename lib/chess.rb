@@ -133,6 +133,17 @@ def convert_choice(move_choice)
 
 
 def legal_move(move_choice, color)
+	#this runs all_available_moves at every turn logging
+	#every available move for the color and then 
+	#logging them by each cell with a piece on of that color in
+	#its 'moves' method. This includes takes. It then checks 
+	#the square that the player wants to move to and if it is in the moves from the cell it is 
+	#moving from it is a legal move
+	# 2 issues stalemate - if there are no moves this should stop game at stalemate - but this does not 
+	#record king take, if you are putting someone in check then you can not be in stalemate - would this be an issue - 
+	# when I create a check check it would run before a stalemate check really ?
+	# It does let you take the king which is correct but if I could reuse this to check if someone is in check that would be useful.
+	# the square check has a check if player 'could' take king - maybe from this I could trigger something?
 		@coordinates = convert_choice(move_choice)
 		old_cell = @board.grid[@coordinates[0]][@coordinates[1]]
 		new_cell = @board.grid[@coordinates[2]][@coordinates[3]]
@@ -371,7 +382,6 @@ def legal_move(move_choice, color)
 	end
 
 	def bishop_moves(cell, coordinates, color)
-		puts  "bishop_moves called"
 		cell.piece.moves = []
 		bishop_move_set = [[1,1],[-1,-1], [-1, 1], [1, -1]]
 			bishop_move_set.each do |move|
@@ -436,10 +446,96 @@ def legal_move(move_choice, color)
 							else
 								cell.piece.moves<<new_position	
 							end	
-								
-	
-			end			
+			end
+			#castling check
+			if cell.piece.first_move == true
+					puts "king has not moved"
+					castle_move_set = [[0,2], [0,-2]]
+					right_castle_position = [coordinates, castle_move_set[0]].transpose.map { |y| y.reduce(:+)}
+					puts "right castle #{right_castle_position.inspect}"
+					left_castle_position = [coordinates, castle_move_set[1]].transpose.map { |y| y.reduce(:+)}
+					puts "left castle #{left_castle_position.inspect}"
+				if right_castle_check(cell, coordinates, color) == true
+					cell.piece.moves<<right_castle_position
+					puts cell.piece.moves.inspect
+				end 	
+				if left_castle_check(cell, coordinates, color) == true
+					cell.piece.moves<<left_castle_position
+					puts cell.piece.moves.inspect
+				end 			
+
+				#if right_rook = coordinates[1] + 3
+					#right_rook_coordinates = [coordinates[0], right_rook]
+					#rook_cell = @board.grid[right_rook_coordinates[0]][right_rook_coordinates[1]]
+					#rook_cell.piece.first_move == true
+					#puts right_rook_coordinates
+					#puts "right rook has not moved"
+				#end
+			end
+
+
+
+					
+
+
+			#if cell.piece.first_move == true
+			# castling_check(cell, color, coordinates)
+			#add castling check here		
 	end
+
+	def right_castle_check(cell, coordinates, color)
+		row = coordinates[0]
+		column = coordinates[1]
+		r_square = @board.grid[row][column+1]
+		second_r_square = @board.grid[row][column+2]
+		if cell_empty(r_square) == true  && cell_empty(second_r_square) == true
+			puts "both right squares empty"
+			rook_square = @board.grid[row][column+3]
+			if rook_square.piece.instance_of?(Rook)
+				puts "its a rook"
+				if rook_square.piece.first_move == true
+					puts "rook has not moved"
+					
+					#if squares under attact is false return true
+					true
+				end	
+			end 	
+			
+		else
+			false
+		end 	
+		
+		#false
+		
+	end
+
+	def left_castle_check(cell, coordinates, color)
+		row = coordinates[0]
+		column = coordinates[1]
+		l_square = @board.grid[row][column-1]
+		second_l_square = @board.grid[row][column-2]
+		third_l_square = @board.grid[row][column-3]
+		if cell_empty(l_square) == true  && cell_empty(second_l_square) == true && cell_empty(third_l_square)
+			puts "all left squares empty"
+			rook_square = @board.grid[row][column-4]
+			if rook_square.piece.instance_of?(Rook)
+				puts "its a rook"
+				if rook_square.piece.first_move == true
+					puts "rook has not moved"
+					
+					#if squares under attact is false return true
+					true
+				end	
+			end 	
+			
+		else
+			false
+		end 	
+		
+		#false
+		
+	end
+
 
 	def square_check(coordinates, color)
 		if square_on_board(coordinates) == false
@@ -452,7 +548,9 @@ def legal_move(move_choice, color)
 				elsif square.piece.color == color
 			    false
 			  elsif square.piece.instance_of?(King)
-			  	puts "king here sweety"
+			  	puts "**** I PUT YOU IN CHECK  *****"
+			  	#this doesn't work at present at this is called before each move -
+			  	# to work it would have to be called after each move.
 			  	false  
 			  end 	
 		end

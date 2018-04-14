@@ -84,6 +84,7 @@ class Board
 		#puts old_cell.piece
 		#also possible en passant check if piece is pawn and first move is false then run
 		#en passant check
+		#if piece is king and move is castling run castling method (to be made) else run method below
 		piece = old_cell.piece
 		update_cell(new_cell, piece)
 		empty_cell(old_cell)
