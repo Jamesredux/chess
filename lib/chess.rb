@@ -452,9 +452,7 @@ def legal_move(move_choice, color)
 					puts "king has not moved"
 					castle_move_set = [[0,2], [0,-2]]
 					right_castle_position = [coordinates, castle_move_set[0]].transpose.map { |y| y.reduce(:+)}
-					puts "right castle #{right_castle_position.inspect}"
 					left_castle_position = [coordinates, castle_move_set[1]].transpose.map { |y| y.reduce(:+)}
-					puts "left castle #{left_castle_position.inspect}"
 				if right_castle_check(cell, coordinates, color) == true
 					cell.piece.moves<<right_castle_position
 					puts cell.piece.moves.inspect
@@ -464,13 +462,6 @@ def legal_move(move_choice, color)
 					puts cell.piece.moves.inspect
 				end 			
 
-				#if right_rook = coordinates[1] + 3
-					#right_rook_coordinates = [coordinates[0], right_rook]
-					#rook_cell = @board.grid[right_rook_coordinates[0]][right_rook_coordinates[1]]
-					#rook_cell.piece.first_move == true
-					#puts right_rook_coordinates
-					#puts "right rook has not moved"
-				#end
 			end
 
 
@@ -495,7 +486,13 @@ def legal_move(move_choice, color)
 				puts "its a rook"
 				if rook_square.piece.first_move == true
 					puts "rook has not moved"
-					
+
+						squares_to_check = [[row,4],[row,5],[row,6]]
+						
+						if squares_clear(squares_to_check, color)
+							puts "no square under attack"
+						
+						end	
 					#if squares under attact is false return true
 					true
 				end	
@@ -533,6 +530,19 @@ def legal_move(move_choice, color)
 		end 	
 		
 		#false
+		
+	end
+
+	def squares_clear(squares_to_check, color) #for castling
+			@all_clear = true
+
+			squares_to_check.each do |square|
+							if under_attack?(square, color) == true
+								@all_clear = false
+							end
+			end
+		@all_clear
+		#should find way to stop itteration after first under attack					
 		
 	end
 
@@ -581,5 +591,22 @@ def legal_move(move_choice, color)
 
 
 	end	
+
+	#is square  under attack method at the moment I plan to make it that this will return true or false on whether
+	# a cell is under attact. Stored in the cell object. I could also add what it is under attack from and where 
+	# but I am not sure if I need this at the moment.
+	# for checking check  mate i plan to go through all the possible moves for the side under attact until I find 
+	# a situation when the king is not under attack.
+
+	def under_attack?(coordinates, color)
+		puts coordinates.inspect
+		puts color
+		
+
+
+		false
+
+	end	
+
 
 end	
