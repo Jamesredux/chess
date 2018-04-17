@@ -336,8 +336,8 @@ def legal_move(move_choice, color)
 
 	def rook_moves(cell, coordinates, color)
 		cell.piece.moves = []
-		rook_move_set = [[1,0],[-1,0], [0,1], [0, -1]]
-			rook_move_set.each do |move|
+		@rook_move_set = [[1,0],[-1,0], [0,1], [0, -1]]
+			@rook_move_set.each do |move|
 				start_square = coordinates
 				@clear_path =true
 				while @clear_path
@@ -365,9 +365,9 @@ def legal_move(move_choice, color)
 
 	def knight_moves(cell, coordinates, color)
 			cell.piece.moves = []
-				knight_move_set = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]
+				@knight_move_set = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]
 				
-				knight_move_set.each do |move|
+				@knight_move_set.each do |move|
 					start_square = coordinates
 					new_position  = [start_square, move].transpose.map { |y| y.reduce(:+)}
 						if square_check(new_position, color) == false
@@ -557,11 +557,11 @@ def legal_move(move_choice, color)
 					true
 				elsif square.piece.color == color
 			    false
-			  elsif square.piece.instance_of?(King)
-			  	puts "**** I PUT YOU IN CHECK  *****"
+			  #elsif square.piece.instance_of?(King)
+			  #	puts "**** I PUT YOU IN CHECK  *****"
 			  	#this doesn't work at present at this is called before each move -
 			  	# to work it would have to be called after each move.
-			  	false  
+			  #	false  
 			  end 	
 		end
 	end
@@ -599,14 +599,92 @@ def legal_move(move_choice, color)
 	# a situation when the king is not under attack.
 
 	def under_attack?(coordinates, color)
-		puts coordinates.inspect
-		puts color
+		puts "checking if #{coordinates.inspect} is under attack"
+		
+		if attack_from_knight(coordinates, color) == true
+			true
+		elsif 
+				straight_attack(coordinates, color) == true
+				true
+		else	
+			false
+		end
+			
 		
 
 
-		false
+		
 
 	end	
 
+	def attack_from_knight(coordinates, color)
+		@attacked_by_knight = false
+		 @knight_move_set.each do |move|
+		 	threat_square = [coordinates, move].transpose.map { |y| y.reduce(:+)}
+				if threat_from_square(threat_square, Knight, color) == true
+					@attacked_by_knight == true
+				end
+			end
+			@attacked_by_knight
+	end
+
+	def straight_attack(coordinates, color)
+		@straight_threat = false
+		@rook_move_set.each do |move|
+			start_square = coordinates
+			@clear_path = true
+			@distance = 1
+				while @clear_path
+					next_square = [start_square, move].transpose.map { |y| y.reduce(:+) }
+						puts "straight check next square #{next_square.inspect}"
+						
+						if square_check(next_square, color) == false	#checks if square is off board or occupied by piece of own color
+							@clear_path = false
+						else next_cell = @board.grid[next_square[0]][next_square[1]]
+							if next_cell.piece.instance_of?(Rook) == true || next_cell.piece.instance_of?(Queen) == true
+									puts  "a square is under straight threat" 
+									@straight_threat = true
+									@clear_path = false
+							#need to stop if hit other opposition piece9
+							elsif 
+									next_cell.piece.instance_of?(King) == true && @distance == 1
+									puts "the king threatens the square"
+									@clear_path = false
+
+									@straight_threat = true
+							elsif 
+								cell_empty(next_cell) == true
+								@distance += 1
+								puts "distance#{@distance}"
+								start_square = next_square
+	
+							else
+							@clear_path = false		
+							end
+						end
+				end
+				puts  @straight_threat
+						@straight_threat
+		end			
+	end
+
+	def threat_from_square(coordinates, piece, color)
+		if square_on_board(coordinates) == false
+			false
+		else
+			square = @board.grid[coordinates[0]][coordinates[1]]
+			if cell_empty(square) == true
+				false
+			elsif
+				square.piece.color != color && square.piece.instance_of?(piece) 
+				puts "your threatened by a #{piece}"
+
+				true
+			end
+
+		end		
+				
+		
+	end
 
 end	

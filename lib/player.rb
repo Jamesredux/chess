@@ -7,7 +7,7 @@ class Player
 		@color = color
 		@turn = 1
 		@in_check  = false
-
+		#add position of king? could be useful
 	end
 
 
