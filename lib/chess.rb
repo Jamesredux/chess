@@ -519,7 +519,10 @@ def legal_move(move_choice, color)
 				puts "its a rook"
 				if rook_square.piece.first_move == true
 					puts "rook has not moved"
-					
+						squares_to_check = [[row,4],[row,3],[row,2],[row,1]]
+							if squares_clear(squares_to_check, color)
+								puts "no left square under attack"
+							end	
 					#if squares under attact is false return true
 					true
 				end	
@@ -605,6 +608,7 @@ def legal_move(move_choice, color)
 			true
 		elsif 
 				straight_attack(coordinates, color) == true
+				puts "straight attack!!"
 				true
 		else	
 			false
@@ -664,11 +668,12 @@ def legal_move(move_choice, color)
 						end
 				end
 				puts  @straight_threat
-						@straight_threat
-		end			
+						
+		end
+		@straight_threat			
 	end
 
-	def threat_from_square(coordinates, piece, color)
+	def threat_from_square(coordinates, piece, color) #is this being used by anything
 		if square_on_board(coordinates) == false
 			false
 		else
