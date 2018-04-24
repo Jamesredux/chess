@@ -383,8 +383,8 @@ def legal_move(move_choice, color)
 
 	def bishop_moves(cell, coordinates, color)
 		cell.piece.moves = []
-		bishop_move_set = [[1,1],[-1,-1], [-1, 1], [1, -1]]
-			bishop_move_set.each do |move|
+		@bishop_move_set = [[-1,-1],[-1, 1], [1, 1], [1, -1]]
+			@bishop_move_set.each do |move|
 				start_square = coordinates
 				@clear_path =true
 				while @clear_path
@@ -410,8 +410,8 @@ def legal_move(move_choice, color)
 
 	def queen_moves(cell, coordinates, color)
 		cell.piece.moves = []
-		queen_move_set = [[1,1],[-1,-1], [-1, 1], [1, -1],[1,0],[-1,0], [0,1], [0, -1]]
-			queen_move_set.each do |move|
+		@queen_move_set = [[1,1],[-1,-1], [-1, 1], [1, -1],[1,0],[-1,0], [0,1], [0, -1]]
+			@queen_move_set.each do |move|
 				start_square = coordinates
 				@clear_path =true
 				while @clear_path
@@ -610,6 +610,10 @@ def legal_move(move_choice, color)
 				straight_attack(coordinates, color) == true
 				puts "straight attack!!"
 				true
+		elsif 
+				diag_attack(coordinates, color) == true
+				puts "diag attack"
+				true		
 		else	
 			false
 		end
@@ -663,14 +667,57 @@ def legal_move(move_choice, color)
 								start_square = next_square
 	
 							else
+								puts "this method DOES get called sometimes"
 							@clear_path = false		
 							end
 						end
 				end
-				puts  @straight_threat
+				puts  "straight threat is #{@straight_threat}"
 						
 		end
 		@straight_threat			
+	end
+
+	def diag_attack(coordinates, color) #this will not include pawns at the moment - have to do a separate method for them.
+		@diag_threat = false
+		@bishop_move_set.each do |move|
+			start_square = coordinates
+			@clear_path = true
+			@distance = 1
+				while @clear_path
+					next_square = [start_square, move].transpose.map { |y| y.reduce(:+) }
+						puts "diag check next square #{next_square.inspect}"
+						
+						if square_check(next_square, color) == false	#checks if square is off board or occupied by piece of own color
+							@clear_path = false
+						else next_cell = @board.grid[next_square[0]][next_square[1]]
+							if next_cell.piece.instance_of?(Bishop) == true || next_cell.piece.instance_of?(Queen) == true
+									puts  "a square is under diagonal threat" 
+									@diag_threat = true
+									@clear_path = false
+							#need to stop if hit other opposition piece9
+							elsif 
+									next_cell.piece.instance_of?(King) == true && @distance == 1
+									puts "the king threatens the square diagonally"
+									@clear_path = false
+
+									@diag_threat = true
+							elsif 
+								cell_empty(next_cell) == true
+								@distance += 1
+								puts "distance#{@distance}"
+								start_square = next_square
+	
+							else
+								puts "this method DOES get called sometimes"
+							@clear_path = false		
+							end
+						end
+				end
+				puts  "diag_threat is #{@diag_threat}"
+						
+		end
+		@diag_threat			
 	end
 
 	def threat_from_square(coordinates, piece, color) #is this being used by anything
