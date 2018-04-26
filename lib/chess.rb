@@ -448,11 +448,16 @@ def queen_moves(cell, coordinates, color)
 						new_position = [start_square, move].transpose.map { |y| y.reduce(:+)}
 							if square_check(new_position, color) == false
 								next
-							elsif take_square(new_position, color) == true
-								cell.piece.moves<<new_position
-							else
-								cell.piece.moves<<new_position	
+							else square = @board.grid[new_position[0]][new_position[1]]	
+								if cell_empty(square) 
+									cell.piece.moves<<new_position	
+								elsif square.piece.instance_of?(King)
+									next					
+								else
+									cell.piece.moves<<new_position						
+								end								
 							end	
+							
 			end
 			#castling check
 			if cell.piece.first_move == true
@@ -536,6 +541,8 @@ def queen_moves(cell, coordinates, color)
 		else
 			false
 		end 	
+		
+		
 	end
 
 	def squares_clear(squares_to_check, color) #for castling
