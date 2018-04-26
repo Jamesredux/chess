@@ -76,6 +76,7 @@ class Board
 		coordinates = convert_choice(move_choice)
 		horizonal_move = (coordinates[1] - coordinates[3]).abs
 		old_cell = grid[coordinates[0]][coordinates[1]]
+		puts old_cell.inspect
 		new_cell = grid[coordinates[2]][coordinates[3]]
 		if old_cell.piece.instance_of?(King) && horizonal_move == 2
 			castle(coordinates, old_cell, new_cell)

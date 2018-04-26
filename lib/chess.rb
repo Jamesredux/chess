@@ -345,18 +345,17 @@ def legal_move(move_choice, color)
 						new_position = [start_square, move].transpose.map { |y| y.reduce(:+)}
 							if square_check(new_position, color) == false
 								@clear_path = false
-							elsif take_square(new_position, color) == true
-								cell.piece.moves<<new_position
-								@sum_of_moves += 1
-								@clear_path = false
-									
-							else
-								cell.piece.moves<<new_position
-								@sum_of_moves += 1
-								start_square = new_position	
-							end	
-								
-
+							else square = @board.grid[new_position[0]][new_position[1]]	
+								if cell_empty(square) 
+									cell.piece.moves<<new_position
+									start_square = new_position
+								elsif square.piece.instance_of?(King)
+										@clear_path = false												
+								else
+										cell.piece.moves<<new_position
+										@clear_path = false
+								end								
+							end				
 				end 	
 			end			
 	end
@@ -371,11 +370,16 @@ def legal_move(move_choice, color)
 					start_square = coordinates
 					new_position  = [start_square, move].transpose.map { |y| y.reduce(:+)}
 						if square_check(new_position, color) == false
-							next 
-						elsif take_square(new_position, color) == true
-							cell.piece.moves<<new_position
-						else
-							cell.piece.moves<<new_position
+							next
+						else square = @board.grid[new_position[0]][new_position[1]]	
+								if cell_empty(square) 
+									cell.piece.moves<<new_position
+								elsif square.piece.instance_of?(King)
+										next												
+								else
+										cell.piece.moves<<new_position
+								end								
+									 
 						end
 				end				
 								
@@ -392,22 +396,23 @@ def legal_move(move_choice, color)
 						new_position = [start_square, move].transpose.map { |y| y.reduce(:+)}
 							if square_check(new_position, color) == false
 								@clear_path = false
-								
-							elsif take_square(new_position, color) == true
-								cell.piece.moves<<new_position
-								@clear_path = false
-							else
-								cell.piece.moves<<new_position
-								start_square = new_position	
-							
+							else square = @board.grid[new_position[0]][new_position[1]]	
+								if cell_empty(square) 
+									cell.piece.moves<<new_position
+									start_square = new_position
+								elsif square.piece.instance_of?(King)
+								@clear_path = false												
+								else
+									puts "putting #{new_position} into available takes"
+										cell.piece.moves<<new_position
+										@clear_path = false
+								end								
 							end	
-								
-
 				end 	
 			end			
 	end
 
-	def queen_moves(cell, coordinates, color)
+def queen_moves(cell, coordinates, color)
 		cell.piece.moves = []
 		@queen_move_set = [[1,1],[-1,-1], [-1, 1], [1, -1],[1,0],[-1,0], [0,1], [0, -1]]
 			@queen_move_set.each do |move|
@@ -416,19 +421,22 @@ def legal_move(move_choice, color)
 				while @clear_path
 					
 						new_position = [start_square, move].transpose.map { |y| y.reduce(:+)}
-							if square_check(new_position, color) == false
+							if square_check(new_position, color) == false #if next square is off board or own color(blocked)
 								@clear_path = false
-							elsif take_square(new_position, color) == true
-								cell.piece.moves<<new_position
-								@clear_path = false
-									
-							else
-								cell.piece.moves<<new_position
-								start_square = new_position	
-							end	
-								
-
+							else square = @board.grid[new_position[0]][new_position[1]]	
+								if cell_empty(square) 
+									cell.piece.moves<<new_position
+									start_square = new_position
+								elsif square.piece.instance_of?(King)
+								@clear_path = false												
+								else
+									puts "putting #{new_position} into available takes"
+										cell.piece.moves<<new_position
+										@clear_path = false
+								end								
+							end
 				end 	
+
 			end			
 	end
 
@@ -453,6 +461,7 @@ def legal_move(move_choice, color)
 					right_castle_position = [coordinates, castle_move_set[0]].transpose.map { |y| y.reduce(:+)}
 					left_castle_position = [coordinates, castle_move_set[1]].transpose.map { |y| y.reduce(:+)}
 				if right_castle_check(cell, coordinates, color) == true
+					puts "right castle check returned true!!!!!"
 					cell.piece.moves<<right_castle_position
 					puts cell.piece.moves.inspect
 				end 	
@@ -490,10 +499,8 @@ def legal_move(move_choice, color)
 						
 						if squares_clear(squares_to_check, color)
 							puts "no right square under attack"
-						
+							true
 						end	
-					#if squares under attact is false return true
-					true
 				end	
 			end 	
 			
@@ -501,7 +508,7 @@ def legal_move(move_choice, color)
 			false
 		end 	
 		
-		#false
+		
 		
 	end
 
@@ -521,18 +528,14 @@ def legal_move(move_choice, color)
 						squares_to_check = [[row,4],[row,3],[row,2],[row,1]]
 							if squares_clear(squares_to_check, color)
 								puts "no left square under attack"
+								true
 							end	
-					#if squares under attact is false return true
-					true
 				end	
 			end 	
-			
+		
 		else
 			false
 		end 	
-		
-		#false
-		
 	end
 
 	def squares_clear(squares_to_check, color) #for castling
@@ -543,6 +546,7 @@ def legal_move(move_choice, color)
 								@all_clear = false
 							end
 			end
+			puts "all_clear is #{@all_clear}"
 		@all_clear
 		#should find way to stop itteration after first under attack					
 		
@@ -556,7 +560,7 @@ def legal_move(move_choice, color)
 		else
 		 	square = @board.grid[coordinates[0]][coordinates[1]]	
 				if cell_empty(square)
-					true
+					true #do I need this
 				elsif square.piece.color == color
 			    false
 			  #elsif square.piece.instance_of?(King)
@@ -568,17 +572,18 @@ def legal_move(move_choice, color)
 		end
 	end
 
-	def take_square(coordinates, color)  #need to add where you can't take king
+	def take_square(coordinates, color)
+		@take_opportunity = false  #need to add where you can't take king
 			square = @board.grid[coordinates[0]][coordinates[1]]	
-				if cell_empty(square)
-					false
-				elsif square.piece.instance_of?(King)
-					puts "king take"
-					false	
+				if cell_empty(square) || square.piece.instance_of?(King)
+					@take_opportunity = false
+				
 				elsif square.piece.color != color 
-			    true
+			   @take_opportunity = true
+			  
+			  	
 			  end 			
-
+		@take_opportunity	  
 	end	
 	
 
@@ -604,6 +609,7 @@ def legal_move(move_choice, color)
 		puts "checking if #{coordinates.inspect} is under attack"
 		#add check is enpassant attack
 		if attack_from_knight(coordinates, color) == true
+			puts "under attack from knight"
 			true
 		elsif 
 				straight_attack(coordinates, color) == true
@@ -633,10 +639,13 @@ def legal_move(move_choice, color)
 		@attacked_by_knight = false
 		 @knight_move_set.each do |move|
 		 	threat_square = [coordinates, move].transpose.map { |y| y.reduce(:+)}
-				if threat_from_square(threat_square, Knight, color) == true
-					@attacked_by_knight == true
+				if threat_from_square(threat_square, Knight, color) == true	
+					puts "this has  been triggggeded"
+					@attacked_by_knight = true
 				end
+
 			end
+			puts "@attacked by knight returns #{@attacked_by_knight}"
 			@attacked_by_knight
 	end
 
@@ -750,22 +759,21 @@ def legal_move(move_choice, color)
 		@pawn_threat			
 	end
 
-	def threat_from_square(coordinates, piece, color) #is this being used by anything
+	def threat_from_square(coordinates, piece, color) #only used by knight check at present
+		@threat_present = false
 		if square_on_board(coordinates) == false
 			false
 		else
 			square = @board.grid[coordinates[0]][coordinates[1]]
 			if cell_empty(square) == true
-				false
+				@threat_present = false
 			elsif
 				square.piece.color != color && square.piece.instance_of?(piece) 
-				puts "your threatened by a #{piece}"
-
-				true
+				@threat_present = true
 			end
 
-		end		
-				
+		end
+		@threat_present		
 		
 	end
 
