@@ -6,7 +6,6 @@ class King < Piece
 	def initialize(color)
 		super
 		@symbol = find_symbol
-		@has_moved = false #for castling
 		@in_check = false
 	end
 

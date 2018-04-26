@@ -223,7 +223,7 @@ def legal_move(move_choice, color)
 
 	def white_pawn_moves(coordinates, cell)
 			cell.piece.moves = []
-			white_pawn_take_set =  [[-1,-1], [-1, 1]]
+			@white_pawn_take_set =  [[-1,-1], [-1, 1]]
 			@route_clear = true
 				while @route_clear
 					new_square = [coordinates, [-1, 0]].transpose.map { |y| y.reduce(:+) }
@@ -246,7 +246,7 @@ def legal_move(move_choice, color)
 				end 
 
  	#in here I will have to put a method that adds the possible moves if there is an en passant take available
-			white_pawn_take_set.each do |move|
+			@white_pawn_take_set.each do |move|
 				new_square = [coordinates, move].transpose.map {  |y| y.reduce(:+) }
 				 if pawn_square_check(new_square, true, 'white')	== true
 				 	cell.piece.moves<<new_square
@@ -257,7 +257,7 @@ def legal_move(move_choice, color)
 
 	def black_pawn_moves(coordinates, cell)
 			cell.piece.moves = []
-			black_pawn_take_set =  [[1,-1], [1, 1]]
+			@black_pawn_take_set =  [[1,-1], [1, 1]]
 			@route_clear = true
 				while @route_clear
 					new_square = [coordinates, [1, 0]].transpose.map { |y| y.reduce(:+) }
@@ -281,7 +281,7 @@ def legal_move(move_choice, color)
 				end 
 
 				#in here I will have to put a method that adds the possible moves if there is an en passant take available
-			black_pawn_take_set.each do |move|
+			@black_pawn_take_set.each do |move|
 				new_square = [coordinates, move].transpose.map {  |y| y.reduce(:+) }
 				 if pawn_square_check(new_square, true, 'black')	== true
 				 	cell.piece.moves<<new_square
@@ -394,7 +394,6 @@ def legal_move(move_choice, color)
 								@clear_path = false
 								
 							elsif take_square(new_position, color) == true
-								puts "take_square returned"
 								cell.piece.moves<<new_position
 								@clear_path = false
 							else
@@ -490,7 +489,7 @@ def legal_move(move_choice, color)
 						squares_to_check = [[row,4],[row,5],[row,6]]
 						
 						if squares_clear(squares_to_check, color)
-							puts "no square under attack"
+							puts "no right square under attack"
 						
 						end	
 					#if squares under attact is false return true
@@ -603,7 +602,7 @@ def legal_move(move_choice, color)
 
 	def under_attack?(coordinates, color)
 		puts "checking if #{coordinates.inspect} is under attack"
-		
+		#add check is enpassant attack
 		if attack_from_knight(coordinates, color) == true
 			true
 		elsif 
@@ -613,7 +612,12 @@ def legal_move(move_choice, color)
 		elsif 
 				diag_attack(coordinates, color) == true
 				puts "diag attack"
-				true		
+				true
+		elsif 
+				pawn_attack(coordinates, color) == true
+				puts "pawn attack"
+				true
+											
 		else	
 			false
 		end
@@ -718,6 +722,32 @@ def legal_move(move_choice, color)
 						
 		end
 		@diag_threat			
+	end
+
+	def pawn_attack(coordinates, color)
+		@pawn_threat = false
+		color == 'black' ? @take_set = @black_pawn_take_set : @take_set = @white_pawn_take_set #this is the reverse of what should be correct as I am looking
+		#for where the threat is coming from so it is the  mirror image
+		puts "this sq can be taken by pawns in #{@take_set.inspect}"
+		@take_set.each do |move|
+			start_square = coordinates
+				next_square = [start_square, move].transpose.map { |y| y.reduce(:+) }
+						puts "pawn check next square #{next_square.inspect}"
+						
+						if square_check(next_square, color) == false	#checks if square is off board or occupied by piece of own color
+							next
+						else next_cell = @board.grid[next_square[0]][next_square[1]]
+							if next_cell.piece.instance_of?(Pawn) == true 
+									puts  "a square is under pawn threat" 
+									@pawn_threat = true
+							end
+						end
+				
+				
+						
+		end
+		puts  "pawn_threat is #{@pawn_threat}"
+		@pawn_threat			
 	end
 
 	def threat_from_square(coordinates, piece, color) #is this being used by anything

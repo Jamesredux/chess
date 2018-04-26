@@ -7,7 +7,6 @@ class Rook < Piece
 	def initialize(color)
 		super
 		@symbol = find_symbol
-		@has_moved = false #for castling
 	end
 
 	def find_symbol

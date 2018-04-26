@@ -74,20 +74,46 @@ class Board
 	
 	def update_board(move_choice)
 		coordinates = convert_choice(move_choice)
+		horizonal_move = (coordinates[1] - coordinates[3]).abs
 		old_cell = grid[coordinates[0]][coordinates[1]]
 		new_cell = grid[coordinates[2]][coordinates[3]]
-		move_piece(old_cell, new_cell)
+		if old_cell.piece.instance_of?(King) && horizonal_move == 2
+			castle(coordinates, old_cell, new_cell)
+		else	
+			move_piece(old_cell, new_cell)
+		end	
 	end	
 
 	def move_piece(old_cell, new_cell)
 		#is it here that I will keep memorary of move in case I have to take back.
-		#puts old_cell.piece
+		#store old cell piece
 		#also possible en passant check if piece is pawn and first move is false then run
 		#en passant check
-		#if piece is king and move is castling run castling method (to be made) else run method below
 		piece = old_cell.piece
 		update_cell(new_cell, piece)
 		empty_cell(old_cell)
+	end
+
+	def castle(coordinates,old_cell, new_cell)
+
+		move_piece(old_cell, new_cell)
+		castle_side = coordinates[2]+coordinates[3]
+		case castle_side
+			when 13
+				rook_from = grid[7][7]
+				rook_to = grid[7][5]
+			when 9
+				rook_from = grid[7][0]
+				rook_to = grid[7][3]
+			when 6
+				rook_from = grid[0][7]
+				rook_to = grid[0][5]
+			when 2
+				rook_from = grid[0][0]
+				rook_to = grid[0][3]
+			end			
+				move_piece(rook_from, rook_to)
+		
 	end
 
 	def update_cell(cell, piece=0)
