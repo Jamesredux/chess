@@ -1,7 +1,7 @@
 require_relative 'board'
 
 module Chess
-	
+		attr_accessor :square_on_board
 
 	def valid_move(move_choice, color)
 		@coordinates = convert_choice(move_choice) 

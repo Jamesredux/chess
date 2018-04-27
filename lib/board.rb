@@ -8,6 +8,7 @@ require_relative 'bishop'
 require_relative 'knight'
 
 
+
 class Board
 	include Draw
 	
@@ -27,8 +28,9 @@ class Board
 					row_array<<x 
 					end
 				grid_array<< row_array
-			end		
+			end			
 		grid_array
+
 	end	
 
 	def set_up_board
@@ -75,11 +77,16 @@ class Board
 	def update_board(move_choice)
 		coordinates = convert_choice(move_choice)
 		horizonal_move = (coordinates[1] - coordinates[3]).abs
+		vertical_move =  (coordinates[0] - coordinates[2]).abs
 		old_cell = grid[coordinates[0]][coordinates[1]]
 		puts old_cell.inspect
 		new_cell = grid[coordinates[2]][coordinates[3]]
 		if old_cell.piece.instance_of?(King) && horizonal_move == 2
 			castle(coordinates, old_cell, new_cell)
+		elsif old_cell.piece.instance_of?(Pawn) && vertical_move == 2
+			#we check enpassant here
+			enpassant_check(coordinates, old_cell, new_cell)
+			move_piece(old_cell, new_cell)	
 		else	
 			move_piece(old_cell, new_cell)
 		end	
@@ -115,6 +122,20 @@ class Board
 			end			
 				move_piece(rook_from, rook_to)
 		
+	end
+
+	def enpassant_check(coordinates, old_cell, new_cell)
+		coordinates_to_check = [[coordinates[2],(coordinates[3]-1)],[coordinates[2],(coordinates[3]+1)]]
+		
+		puts coordinates_to_check.inspect
+		coordinates_to_check.each do |x|
+			puts x.inspect
+			
+
+			square = grid[x[0]][x[1]]
+			puts square.piece
+		end
+		#why is -1 showing as a  valid cell - because -1 shows last element in array silly
 	end
 
 	def update_cell(cell, piece=0)
