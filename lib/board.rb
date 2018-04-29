@@ -78,17 +78,18 @@ class Board
 		coordinates = convert_choice(move_choice)
 		horizonal_move = (coordinates[1] - coordinates[3]).abs
 		vertical_move =  (coordinates[0] - coordinates[2]).abs
-		#puts "The horizantal move is #{horizonal_move} and the vertical_move is #{vertical_move}"
 		old_cell = grid[coordinates[0]][coordinates[1]]
+		puts old_cell.piece.inspect
 		color_moving = old_cell.piece.color
 		new_cell = grid[coordinates[2]][coordinates[3]]
+		
 		if new_cell.enpassant != false
 			enpassant_take(coordinates, old_cell, new_cell)
-		#if piece is pawn and horiz move is 1 and new cell is empty - enpassant take
+		elsif old_cell.piece.instance_of?(Pawn) && last_row(coordinates)
+				promote(old_cell, new_cell)	
 		elsif old_cell.piece.instance_of?(King) && horizonal_move == 2
 			castle(coordinates, old_cell, new_cell)
 		elsif old_cell.piece.instance_of?(Pawn) && vertical_move == 2
-			#we check enpassant here
 			enpassant_check(coordinates, old_cell, new_cell, color_moving)
 			move_piece(old_cell, new_cell)	
 		else	
@@ -99,8 +100,6 @@ class Board
 	def move_piece(old_cell, new_cell)
 		#is it here that I will keep memorary of move in case I have to take back.
 		#store old cell piece
-		#also possible en passant check if piece is pawn and first move is false then run
-		#en passant check
 		piece = old_cell.piece
 		update_cell(new_cell, piece)
 		empty_cell(old_cell)
@@ -191,6 +190,56 @@ class Board
 			cell.enpassant = false
 			cell.enpassant_color = 0
 		end	
+	end
+
+	def last_row(coordinates)
+		row = coordinates[2]
+			if row == 0 || row == 7
+				true
+			else
+				false
+			end	
+	end	
+
+	def promote(old_cell, new_cell)
+		puts "Your Pawn has reached the final rank. How would you like to promote it\ninput 'Q' for Queen, 'K' for knight, 'R' for rook or 'B' for bishop."
+		new_piece = choose_promotion
+		#need to get piece then change old_cell.piece to new
+
+
+		puts new_piece
+		piece_name = promote_piece(new_piece)
+		new_piece(old_cell, piece_name, old_cell.piece.color)
+		puts old_cell.inspect
+		
+		move_piece(old_cell, new_cell)
+		
+		
+	end
+
+	def choose_promotion
+		pieces_to_pick = ['q','b','k','r']
+		piece_choice = gets.chomp.downcase
+		if pieces_to_pick.include?(piece_choice)
+			piece_choice
+		else
+			puts "I didn't understand that choice"
+			choose_promotion
+		end		
+	end
+
+	def promote_piece(new_piece)
+		case new_piece
+		when 'q'
+			piece_name = Queen
+		when 'r'
+			piece_name = Rook
+		when 'b'
+			piece_name = Bishop
+		when 'k'
+			piece_name = Knight
+		end		
+		piece_name
 	end
 
 	def convert_choice(move_choice)
