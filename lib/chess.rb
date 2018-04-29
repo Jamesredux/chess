@@ -1,7 +1,7 @@
 require_relative 'board'
 
 module Chess
-		attr_accessor :square_on_board
+		
 
 	def valid_move(move_choice, color)
 		@coordinates = convert_choice(move_choice) 
@@ -222,7 +222,7 @@ def legal_move(move_choice, color)
 	end		
 
 	def white_pawn_moves(coordinates, cell)
-			cell.piece.moves = []
+			cell.piece.moves = []	
 			@white_pawn_take_set =  [[-1,-1], [-1, 1]]
 			@route_clear = true
 				while @route_clear
@@ -301,9 +301,11 @@ def legal_move(move_choice, color)
 			#if square.enpass = true then return true? would that work?
 			#would the only pawns that were looking to move into the square during this method
 			#be ones that had the right to take en pass I think so. remember that this method is just listing the available 
-			#moves
+			#moves no there could also be other pawns that 
 				
-			 if cell_empty(square)
+			if square.enpassant != false && square.enpassant_color == color
+					true	
+			elsif cell_empty(square)
 
 			   	false			
 			 elsif square.piece.instance_of?(King)
@@ -461,12 +463,10 @@ def queen_moves(cell, coordinates, color)
 			end
 			#castling check
 			if cell.piece.first_move == true
-					puts "king has not moved"
 					castle_move_set = [[0,2], [0,-2]]
 					right_castle_position = [coordinates, castle_move_set[0]].transpose.map { |y| y.reduce(:+)}
 					left_castle_position = [coordinates, castle_move_set[1]].transpose.map { |y| y.reduce(:+)}
 				if right_castle_check(cell, coordinates, color) == true
-					puts "right castle check returned true!!!!!"
 					cell.piece.moves<<right_castle_position
 					puts cell.piece.moves.inspect
 				end 	

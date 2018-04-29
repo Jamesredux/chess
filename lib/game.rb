@@ -23,7 +23,8 @@ class Game
 		puts "#{@player_turn.player_name} Input your choice"
 		choice = get_choice
 		@board.update_board(choice)
-		#run 'status check' here which would check for checks and stalemate?
+		#run 'status check' here which would check for checks and stalemate? and clear enpassant
+		@board.status_check(@player_turn.color)
 		switch_player
 		@board.draw_board
 		end

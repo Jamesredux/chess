@@ -78,14 +78,18 @@ class Board
 		coordinates = convert_choice(move_choice)
 		horizonal_move = (coordinates[1] - coordinates[3]).abs
 		vertical_move =  (coordinates[0] - coordinates[2]).abs
+		#puts "The horizantal move is #{horizonal_move} and the vertical_move is #{vertical_move}"
 		old_cell = grid[coordinates[0]][coordinates[1]]
-		puts old_cell.inspect
+		color_moving = old_cell.piece.color
 		new_cell = grid[coordinates[2]][coordinates[3]]
-		if old_cell.piece.instance_of?(King) && horizonal_move == 2
+		if new_cell.enpassant != false
+			enpassant_take(coordinates, old_cell, new_cell)
+		#if piece is pawn and horiz move is 1 and new cell is empty - enpassant take
+		elsif old_cell.piece.instance_of?(King) && horizonal_move == 2
 			castle(coordinates, old_cell, new_cell)
 		elsif old_cell.piece.instance_of?(Pawn) && vertical_move == 2
 			#we check enpassant here
-			enpassant_check(coordinates, old_cell, new_cell)
+			enpassant_check(coordinates, old_cell, new_cell, color_moving)
 			move_piece(old_cell, new_cell)	
 		else	
 			move_piece(old_cell, new_cell)
@@ -124,18 +128,38 @@ class Board
 		
 	end
 
-	def enpassant_check(coordinates, old_cell, new_cell)
-		coordinates_to_check = [[coordinates[2],(coordinates[3]-1)],[coordinates[2],(coordinates[3]+1)]]
-		
-		puts coordinates_to_check.inspect
+	def enpassant_check(coordinates, old_cell, new_cell, color_moving)
+		coordinates_to_check = [[coordinates[2],(coordinates[3]-1)],[coordinates[2],(coordinates[3]+1)]] #the squares either side of the pawn that has just moved 2
 		coordinates_to_check.each do |x|
-			puts x.inspect
-			
-
-			square = grid[x[0]][x[1]]
-			puts square.piece
+			if on_board(x)
+				square = grid[x[0]][x[1]]
+				if square.piece.instance_of?(Pawn) && square.piece.color != color_moving
+					color_moving == "black" ? color_can_take = 'white' : color_can_take = 'black' 
+					coordinates_behind = [(coordinates[0]+coordinates[2])/2,coordinates[1]] #square behind the pawn  that the taking pawn would move to.
+					square_behind = grid[coordinates_behind[0]][coordinates_behind[1]]
+					square_behind.enpassant = [coordinates[2],coordinates[3]] #stores cell infront that pawn will be removed from.
+					square_behind.enpassant_color = color_can_take	
+					end	
+			end
 		end
-		#why is -1 showing as a  valid cell - because -1 shows last element in array silly
+	end
+
+	def enpassant_take(coordinates, old_cell, new_cell)
+		puts "enpassant take"
+		cell_to_empty = grid[new_cell.enpassant[0]][new_cell.enpassant[1]]
+		empty_cell(cell_to_empty)
+		move_piece(old_cell, new_cell)
+	end
+
+	def on_board(coordinates) #copy of method in chess module
+		if coordinates[0] < 0 || coordinates[0] > 7
+			false
+		elsif coordinates[1] < 0 || coordinates[1] > 7
+			false	
+		else
+			true
+		end
+		
 	end
 
 	def update_cell(cell, piece=0)
@@ -152,7 +176,22 @@ class Board
 	def empty_cell(cell) #just a simplified method for emptying a cell
 		update_cell(cell)
 	end
-	
+
+	def status_check(color) #that will be the color that has just moved.
+			grid.each do |row|
+				row.each do |cell|
+				clear_enpassant(cell, color)
+				end
+			end	
+
+	end
+
+	def clear_enpassant(cell, color)
+		if cell.enpassant != false && cell.enpassant_color == color 
+			cell.enpassant = false
+			cell.enpassant_color = 0
+		end	
+	end
 
 	def convert_choice(move_choice)
 		choice_array = move_choice.split('')
