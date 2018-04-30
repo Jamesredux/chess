@@ -313,11 +313,9 @@ end
 					left_castle_position = [coordinates, castle_move_set[1]].transpose.map { |y| y.reduce(:+)}
 				if right_castle_check(cell, coordinates, color) == true
 					cell.piece.moves<<right_castle_position
-					puts cell.piece.moves.inspect
 				end 	
 				if left_castle_check(cell, coordinates, color) == true
 					cell.piece.moves<<left_castle_position
-					puts cell.piece.moves.inspect
 				end 			
 
 			end
@@ -348,171 +346,19 @@ end
 			false
 		end 		
 	end
-	
-=begin
-	def rook_moves(cell, coordinates, color)
-		cell.piece.moves = []
-		@rook_move_set = [[1,0],[-1,0], [0,1], [0, -1]]
-			@rook_move_set.each do |move|
-				start_square = coordinates
-				@clear_path =true
-				while @clear_path
-					
-						new_position = [start_square, move].transpose.map { |y| y.reduce(:+)}
-							if square_check(new_position, color) == false
-								@clear_path = false
-							else square = @board.grid[new_position[0]][new_position[1]]	
-								if cell_empty(square) 
-									cell.piece.moves<<new_position
-									start_square = new_position
-								elsif square.piece.instance_of?(King)
-										@clear_path = false												
-								else
-										cell.piece.moves<<new_position
-										@clear_path = false
-								end								
-							end				
-				end 	
-			end			
-	end
 
 
-
-	def knight_moves(cell, coordinates, color)
-			cell.piece.moves = []
-				@knight_move_set = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]
-				
-				@knight_move_set.each do |move|
-					start_square = coordinates
-					new_position  = [start_square, move].transpose.map { |y| y.reduce(:+)}
-						if square_check(new_position, color) == false
-							next
-						else square = @board.grid[new_position[0]][new_position[1]]	
-								if cell_empty(square) 
-									cell.piece.moves<<new_position
-								elsif square.piece.instance_of?(King)
-										next												
-								else
-										cell.piece.moves<<new_position
-								end								
-									 
-						end
-				end				
-								
-	end
-
-	def bishop_moves(cell, coordinates, color)
-		cell.piece.moves = []
-		@bishop_move_set = [[-1,-1],[-1, 1], [1, 1], [1, -1]]
-			@bishop_move_set.each do |move|
-				start_square = coordinates
-				@clear_path =true
-				while @clear_path
-					
-						new_position = [start_square, move].transpose.map { |y| y.reduce(:+)}
-							if square_check(new_position, color) == false
-								@clear_path = false
-							else square = @board.grid[new_position[0]][new_position[1]]	
-								if cell_empty(square) 
-									cell.piece.moves<<new_position
-									start_square = new_position
-								elsif square.piece.instance_of?(King)
-								@clear_path = false												
-								else
-										cell.piece.moves<<new_position
-										@clear_path = false
-								end								
-							end	
-				end 	
-			end			
-	end
-
-def queen_moves(cell, coordinates, color)
-		cell.piece.moves = []
-		@queen_move_set = [[1,1],[-1,-1], [-1, 1], [1, -1],[1,0],[-1,0], [0,1], [0, -1]]
-			@queen_move_set.each do |move|
-				start_square = coordinates
-				@clear_path =true
-				while @clear_path
-					
-						new_position = [start_square, move].transpose.map { |y| y.reduce(:+)}
-							if square_check(new_position, color) == false #if next square is off board or own color(blocked)
-								@clear_path = false
-							else square = @board.grid[new_position[0]][new_position[1]]	
-								if cell_empty(square) 
-									cell.piece.moves<<new_position
-									start_square = new_position
-								elsif square.piece.instance_of?(King)
-								@clear_path = false												
-								else
-										cell.piece.moves<<new_position
-										@clear_path = false
-								end								
-							end
-				end 	
-
-			end			
-	end
-
-	def king_moves(cell, coordinates, color)
-		cell.piece.moves = []
-		king_move_set = [[1,1],[-1,-1], [-1, 1], [1, -1],[1,0],[-1,0], [0,1], [0, -1]]
-			king_move_set.each do |move|
-				start_square = coordinates
-						new_position = [start_square, move].transpose.map { |y| y.reduce(:+)}
-							if square_check(new_position, color) == false
-								next
-							else square = @board.grid[new_position[0]][new_position[1]]	
-								if cell_empty(square) 
-									cell.piece.moves<<new_position	
-								elsif square.piece.instance_of?(King)
-									next					
-								else
-									cell.piece.moves<<new_position						
-								end								
-							end	
-							
-			end
-			#castling check
-			if cell.piece.first_move == true
-					castle_move_set = [[0,2], [0,-2]]
-					right_castle_position = [coordinates, castle_move_set[0]].transpose.map { |y| y.reduce(:+)}
-					left_castle_position = [coordinates, castle_move_set[1]].transpose.map { |y| y.reduce(:+)}
-				if right_castle_check(cell, coordinates, color) == true
-					cell.piece.moves<<right_castle_position
-					puts cell.piece.moves.inspect
-				end 	
-				if left_castle_check(cell, coordinates, color) == true
-					cell.piece.moves<<left_castle_position
-					puts cell.piece.moves.inspect
-				end 			
-
-			end
-
-
-
-					
-
-
-			#if cell.piece.first_move == true
-			# castling_check(cell, color, coordinates)
-			#add castling check here		
-	end
-=end
 	def right_castle_check(cell, coordinates, color)
 		row = coordinates[0]
 		column = coordinates[1]
 		r_square = @board.grid[row][column+1]
 		second_r_square = @board.grid[row][column+2]
 		if cell_empty(r_square) == true  && cell_empty(second_r_square) == true
-			puts "both right squares empty"
 			rook_square = @board.grid[row][column+3]
 			if rook_square.piece.instance_of?(Rook)
 				if rook_square.piece.first_move == true
-						squares_to_check = [[row,4],[row,5],[row,6]]
-						
+						squares_to_check = [[row,4],[row,5],[row,6]]				
 						if squares_clear(squares_to_check, color)
-							puts "no right square under attack"
 							true
 						end	
 				end	
@@ -533,13 +379,11 @@ def queen_moves(cell, coordinates, color)
 		second_l_square = @board.grid[row][column-2]
 		third_l_square = @board.grid[row][column-3]
 		if cell_empty(l_square) == true  && cell_empty(second_l_square) == true && cell_empty(third_l_square)
-			puts "all left squares empty"
 			rook_square = @board.grid[row][column-4]
 			if rook_square.piece.instance_of?(Rook)
 				if rook_square.piece.first_move == true
 						squares_to_check = [[row,4],[row,3],[row,2],[row,1]]
 							if squares_clear(squares_to_check, color)
-								puts "no left square under attack"
 								true
 							end	
 				end	
@@ -556,7 +400,7 @@ def queen_moves(cell, coordinates, color)
 			@all_clear = true
 
 			squares_to_check.each do |square|
-							if under_attack?(square, color) == true
+						 if under_attack?(square, color) == true
 								@all_clear = false
 							end
 			end
@@ -612,6 +456,7 @@ def queen_moves(cell, coordinates, color)
 
 
 	end	
+	#could also go through other pieces available moves, if they include square to check -- it is under attack
 
 	#is square  under attack method at the moment I plan to make it that this will return true or false on whether
 	# a cell is under attact. Stored in the cell object. I could also add what it is under attack from and where 
