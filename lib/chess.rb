@@ -200,10 +200,8 @@ end
 
 	def map_moves(coordinates, color)
 		cell = @board.grid[coordinates[0]][coordinates[1]]
-		if cell.piece.instance_of?(Pawn) #&& color == 'white'
+		if cell.piece.instance_of?(Pawn) 
 			pawn_moves(coordinates, cell, color)
-		#elsif cell.piece.instance_of?(Pawn) && color == 'black'
-		#	black_pawn_moves(coordinates, cell)
 		else
 			piece_moves(cell, coordinates, color)
 		end 		
@@ -273,23 +271,85 @@ end
 
 
 	def piece_moves(cell, coordinates, color)
-		color == 'white' ? other_color = 'black': other_color = 'white'
 		piece = cell.piece
-
-		if piece.instance_of?(Rook) 
-			rook_moves(cell, coordinates, color)
-		elsif piece.instance_of?(Knight)
-			knight_moves(cell, coordinates, color)
-		elsif piece.instance_of?(Bishop)
-			bishop_moves(cell, coordinates, color)
-		elsif piece.instance_of?(Queen)
-			queen_moves(cell, coordinates, color)
-		elsif piece.instance_of?(King)
-			king_moves(cell, coordinates, color)	
-		end				
-
+		log_moves(cell, coordinates, piece, color)		
 	end	
 
+
+	def log_moves(cell, coordinates, piece, color)
+		
+		cell.piece.moves = []
+		@single_move = single_move?(piece)
+		@move_set = get_move_set(piece)
+		
+			@move_set.each do |move|
+				start_square = coordinates
+				@clear_path =true
+				while @clear_path
+					
+						new_position = [start_square, move].transpose.map { |y| y.reduce(:+)}
+							if square_check(new_position, color) == false #if next square is off board or own color(blocked)
+								@clear_path = false
+							else square = @board.grid[new_position[0]][new_position[1]]	
+								if cell_empty(square) 
+									cell.piece.moves<<new_position
+									if @single_move == true
+										@clear_path = false
+									else	
+										start_square = new_position
+									end	
+								elsif square.piece.instance_of?(King)
+								@clear_path = false												
+								else
+										cell.piece.moves<<new_position
+										@clear_path = false
+								end								
+							end
+				end 	
+			end	
+			if cell.piece.instance_of?(King) && cell.piece.first_move == true
+					castle_move_set = [[0,2], [0,-2]]
+					right_castle_position = [coordinates, castle_move_set[0]].transpose.map { |y| y.reduce(:+)}
+					left_castle_position = [coordinates, castle_move_set[1]].transpose.map { |y| y.reduce(:+)}
+				if right_castle_check(cell, coordinates, color) == true
+					cell.piece.moves<<right_castle_position
+					puts cell.piece.moves.inspect
+				end 	
+				if left_castle_check(cell, coordinates, color) == true
+					cell.piece.moves<<left_castle_position
+					puts cell.piece.moves.inspect
+				end 			
+
+			end
+
+					
+	end	
+
+	def get_move_set(piece)
+		if piece.instance_of?(Queen)
+			@move_set = [[1,1],[-1,-1], [-1, 1], [1, -1],[1,0],[-1,0], [0,1], [0, -1]]
+		elsif piece.instance_of?(Rook)
+			@move_set = [[1,0],[-1,0], [0,1], [0, -1]]
+		elsif piece.instance_of?(Bishop)
+			@move_set = [[-1,-1],[-1, 1], [1, 1], [1, -1]]
+		elsif piece.instance_of?(King)
+			@move_set = [[1,1],[-1,-1], [-1, 1], [1, -1],[1,0],[-1,0], [0,1], [0, -1]]	 	
+		elsif piece.instance_of?(Knight)
+			@move_set = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]
+		end	
+		@move_set
+
+	end
+
+	def single_move?(piece)
+		if piece.instance_of?(King) || piece.instance_of?(Knight)
+			true
+		else
+			false
+		end 		
+	end
+	
+=begin
 	def rook_moves(cell, coordinates, color)
 		cell.piece.moves = []
 		@rook_move_set = [[1,0],[-1,0], [0,1], [0, -1]]
@@ -359,7 +419,6 @@ end
 								elsif square.piece.instance_of?(King)
 								@clear_path = false												
 								else
-									puts "putting #{new_position} into available takes"
 										cell.piece.moves<<new_position
 										@clear_path = false
 								end								
@@ -439,7 +498,7 @@ def queen_moves(cell, coordinates, color)
 			# castling_check(cell, color, coordinates)
 			#add castling check here		
 	end
-
+=end
 	def right_castle_check(cell, coordinates, color)
 		row = coordinates[0]
 		column = coordinates[1]
@@ -449,10 +508,7 @@ def queen_moves(cell, coordinates, color)
 			puts "both right squares empty"
 			rook_square = @board.grid[row][column+3]
 			if rook_square.piece.instance_of?(Rook)
-				puts "its a rook"
 				if rook_square.piece.first_move == true
-					puts "rook has not moved"
-
 						squares_to_check = [[row,4],[row,5],[row,6]]
 						
 						if squares_clear(squares_to_check, color)
@@ -480,9 +536,7 @@ def queen_moves(cell, coordinates, color)
 			puts "all left squares empty"
 			rook_square = @board.grid[row][column-4]
 			if rook_square.piece.instance_of?(Rook)
-				puts "its a rook"
 				if rook_square.piece.first_move == true
-					puts "rook has not moved"
 						squares_to_check = [[row,4],[row,3],[row,2],[row,1]]
 							if squares_clear(squares_to_check, color)
 								puts "no left square under attack"
@@ -596,34 +650,31 @@ def queen_moves(cell, coordinates, color)
 	end	
 
 	def attack_from_knight(coordinates, color)
+		@knight_move_set = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]
 		@attacked_by_knight = false
 		 @knight_move_set.each do |move|
 		 	threat_square = [coordinates, move].transpose.map { |y| y.reduce(:+)}
 				if threat_from_square(threat_square, Knight, color) == true	
-					puts "this has  been triggggeded"
 					@attacked_by_knight = true
 				end
 
 			end
-			puts "@attacked by knight returns #{@attacked_by_knight}"
 			@attacked_by_knight
 	end
 
 	def straight_attack(coordinates, color)
+		@rook_move_set = [[1,0],[-1,0], [0,1], [0, -1]]
 		@straight_threat = false
 		@rook_move_set.each do |move|
 			start_square = coordinates
 			@clear_path = true
 			@distance = 1
 				while @clear_path
-					next_square = [start_square, move].transpose.map { |y| y.reduce(:+) }
-						puts "straight check next square #{next_square.inspect}"
-						
+					next_square = [start_square, move].transpose.map { |y| y.reduce(:+) }	
 						if square_check(next_square, color) == false	#checks if square is off board or occupied by piece of own color
 							@clear_path = false
 						else next_cell = @board.grid[next_square[0]][next_square[1]]
 							if next_cell.piece.instance_of?(Rook) == true || next_cell.piece.instance_of?(Queen) == true
-									puts  "a square is under straight threat" 
 									@straight_threat = true
 									@clear_path = false
 							#need to stop if hit other opposition piece9
@@ -636,7 +687,6 @@ def queen_moves(cell, coordinates, color)
 							elsif 
 								cell_empty(next_cell) == true
 								@distance += 1
-								puts "distance#{@distance}"
 								start_square = next_square
 	
 							else
@@ -644,14 +694,13 @@ def queen_moves(cell, coordinates, color)
 							@clear_path = false		
 							end
 						end
-				end
-				puts  "straight threat is #{@straight_threat}"
-						
+				end		
 		end
 		@straight_threat			
 	end
 
 	def diag_attack(coordinates, color) #this will not include pawns at the moment - have to do a separate method for them.
+		@bishop_move_set = [[-1,-1],[-1, 1], [1, 1], [1, -1]]
 		@diag_threat = false
 		@bishop_move_set.each do |move|
 			start_square = coordinates
@@ -659,13 +708,10 @@ def queen_moves(cell, coordinates, color)
 			@distance = 1
 				while @clear_path
 					next_square = [start_square, move].transpose.map { |y| y.reduce(:+) }
-						puts "diag check next square #{next_square.inspect}"
-						
 						if square_check(next_square, color) == false	#checks if square is off board or occupied by piece of own color
 							@clear_path = false
 						else next_cell = @board.grid[next_square[0]][next_square[1]]
 							if next_cell.piece.instance_of?(Bishop) == true || next_cell.piece.instance_of?(Queen) == true
-									puts  "a square is under diagonal threat" 
 									@diag_threat = true
 									@clear_path = false
 							#need to stop if hit other opposition piece9
@@ -678,7 +724,6 @@ def queen_moves(cell, coordinates, color)
 							elsif 
 								cell_empty(next_cell) == true
 								@distance += 1
-								puts "distance#{@distance}"
 								start_square = next_square
 	
 							else
@@ -687,7 +732,6 @@ def queen_moves(cell, coordinates, color)
 							end
 						end
 				end
-				puts  "diag_threat is #{@diag_threat}"
 						
 		end
 		@diag_threat			
@@ -695,14 +739,11 @@ def queen_moves(cell, coordinates, color)
 
 	def pawn_attack(coordinates, color)
 		@pawn_threat = false
-		color == 'black' ? @take_set = @black_pawn_take_set : @take_set = @white_pawn_take_set #this is the reverse of what should be correct as I am looking
+		color == 'black' ? @take_set = [[1,-1], [1, 1]] : @take_set = [[-1,-1], [-1, 1]] #this is the reverse of what should be correct as I am looking
 		#for where the threat is coming from so it is the  mirror image
-		puts "this sq can be taken by pawns in #{@take_set.inspect}"
 		@take_set.each do |move|
 			start_square = coordinates
-				next_square = [start_square, move].transpose.map { |y| y.reduce(:+) }
-						puts "pawn check next square #{next_square.inspect}"
-						
+				next_square = [start_square, move].transpose.map { |y| y.reduce(:+) }						
 						if square_check(next_square, color) == false	#checks if square is off board or occupied by piece of own color
 							next
 						else next_cell = @board.grid[next_square[0]][next_square[1]]
@@ -715,7 +756,6 @@ def queen_moves(cell, coordinates, color)
 				
 						
 		end
-		puts  "pawn_threat is #{@pawn_threat}"
 		@pawn_threat			
 	end
 
