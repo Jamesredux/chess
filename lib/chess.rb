@@ -3,20 +3,13 @@ require_relative 'board'
 module Chess
 		
 
-	def valid_move(move_choice, color)
-		@coordinates = convert_choice(move_choice) 
+	def correct_input(move_choice, color)
 		if correct_length(move_choice) == false 
 			puts "Incorrect input! Please only input 4 characters eg. A6A5"
 			false
 		elsif valid_input(move_choice) == false
 			puts "Invalid input - please use the format B3H5"
 			false	
-		elsif players_piece?(@coordinates, color) == false  #move to legal move with land on own piece so won't have to call convert_choice in this method
-			puts "You do not have a piece on that square."
-			false
-		elsif land_on_own_piece?(@coordinates, color) == false    #logically this should be in legal move
-			puts "You can not move to a square you already occupy"
-			false	 
 		else
 			true
 		end	
@@ -25,29 +18,6 @@ module Chess
 	def correct_length(move_choice)
 		move_choice.size == 4? true :false
 	end
-
-	def players_piece?(coordinates, color)  #reruse this with other methods
-		x = coordinates[0]
-		y = coordinates[1]
-		if @board.grid[x][y].piece == 0 || @board.grid[x][y].piece.color != color
-			false
-		else
-			true
-		end		 	
-	end	
-
-	def land_on_own_piece?(coordinates, color)   #incorporate this into legal move check - just add that last square is not own piece
-		x = coordinates[2]
-		y = coordinates[3]
-		if @board.grid[x][y].piece == 0
-			true
-		elsif 
-			@board.grid[x][y].piece.color == color 
-		  false
-		else
-			true
-		end		
-	end	
 
 	def valid_input(move_choice)
 		choice_array = move_choice.split('')
@@ -83,7 +53,31 @@ module Chess
 	end
 
 
-def convert_choice(move_choice)
+
+
+
+def legal_move(move_choice, color)
+		@coordinates = convert_choice(move_choice)
+		if players_piece?(@coordinates, color) == false  
+			puts "You do not have a piece on that square."
+			false
+		elsif land_on_own_piece?(@coordinates, color) == false   
+			puts "You can not move to a square you already occupy"
+			false	 
+		elsif
+			old_cell = @board.grid[@coordinates[0]][@coordinates[1]]
+			new_coordinates = [@coordinates[2], @coordinates[3]] 
+			if old_cell.piece.moves.include?(new_coordinates) == true
+				true
+			else
+				puts "That is an invalid move"
+				false
+			end	
+		end
+
+end	
+
+	def convert_choice(move_choice)
 		choice_array = move_choice.split('')
 		converted = []
 		choice_array.each do |x|
@@ -131,34 +125,28 @@ def convert_choice(move_choice)
 		end
 	end		
 
-
-def legal_move(move_choice, color)
-	#this runs all_available_moves at every turn logging
-	#every available move for the color and then 
-	#logging them by each cell with a piece on of that color in
-	#its 'moves' method. This includes takes. It then checks 
-	#the square that the player wants to move to and if it is in the moves from the cell it is 
-	#moving from it is a legal move
-	# 2 issues stalemate - if there are no moves this should stop game at stalemate - but this does not 
-	#record king take, if you are putting someone in check then you can not be in stalemate - would this be an issue - 
-	# when I create a check check it would run before a stalemate check really ?
-	# It does let you take the king which is correct but if I could reuse this to check if someone is in check that would be useful.
-	# the square check has a check if player 'could' take king - maybe from this I could trigger something?
-		@coordinates = convert_choice(move_choice)
-		old_cell = @board.grid[@coordinates[0]][@coordinates[1]]
-		new_cell = @board.grid[@coordinates[2]][@coordinates[3]]
-		all_available_moves(color)
-		new_coordinates = [@coordinates[2], @coordinates[3]]
-		if old_cell.piece.moves.include?(new_coordinates)
-			true
-		else
-			puts "That is an invalid move"
+ def players_piece?(coordinates, color)  #reruse this with other methods
+		x = coordinates[0]
+		y = coordinates[1]
+		if @board.grid[x][y].piece == 0 || @board.grid[x][y].piece.color != color
 			false
-		end
-				
+		else
+			true
+		end		 	
 	end	
 
-
+	def land_on_own_piece?(coordinates, color)   #incorporate this into legal move check - just add that last square is not own piece
+		x = coordinates[2]
+		y = coordinates[3]
+		if @board.grid[x][y].piece == 0
+			true
+		elsif 
+			@board.grid[x][y].piece.color == color 
+		  false
+		else
+			true
+		end		
+	end	
 
 	def cell_empty(cell)
 		if cell.piece == 0
@@ -203,31 +191,40 @@ def legal_move(move_choice, color)
 		@location_of_pieces
 	end	
 
+=begin #I don't think this is called by anything
 	def piece_check(coordinates, color)
 		puts @board.grid[coordinates[0]][coordinates[1]].piece 
 		
 	end
-
+=end 
 
 	def map_moves(coordinates, color)
 		cell = @board.grid[coordinates[0]][coordinates[1]]
-		if cell.piece.instance_of?(Pawn) && color == 'white'
-			white_pawn_moves(coordinates, cell)
-		elsif cell.piece.instance_of?(Pawn) && color == 'black'
-			black_pawn_moves(coordinates, cell)
+		if cell.piece.instance_of?(Pawn) #&& color == 'white'
+			pawn_moves(coordinates, cell, color)
+		#elsif cell.piece.instance_of?(Pawn) && color == 'black'
+		#	black_pawn_moves(coordinates, cell)
 		else
 			piece_moves(cell, coordinates, color)
 		end 		
 
 	end		
 
-	def white_pawn_moves(coordinates, cell)
-			cell.piece.moves = []	
-			@white_pawn_take_set =  [[-1,-1], [-1, 1]]
+ def pawn_moves(coordinates, cell, color)
+		cell.piece.moves = []	
+			if color == 'white'
+					@pawn_take_set =  [[-1,-1], [-1, 1]]
+					@pawn_move = [-1, 0]
+					@double_move = [-2, 0]
+			else
+					@pawn_take_set =  [[1,-1], [1, 1]]
+					@pawn_move = [1, 0]
+					@double_move = [2, 0]
+			end 				
 			@route_clear = true
 				while @route_clear
-					new_square = [coordinates, [-1, 0]].transpose.map { |y| y.reduce(:+) }
-						 if pawn_square_check(new_square, false, 'white') == false
+					new_square = [coordinates, @pawn_move].transpose.map { |y| y.reduce(:+) }
+						 if pawn_square_check(new_square, false, color) == false
 						 	@route_clear = false
 						 elsif cell.piece.first_move == false
 						 	cell.piece.moves<<new_square
@@ -236,84 +233,41 @@ def legal_move(move_choice, color)
 						 else
 						 	cell.piece.moves<<new_square
 						 	@sum_of_moves += 1
-						 		new_square = [coordinates, [-2, 0]].transpose.map { |y| y.reduce(:+) }	 
-						 			 if  pawn_square_check(new_square, false, 'white') == true
+						 		new_square = [coordinates, @double_move].transpose.map { |y| y.reduce(:+) }	 
+						 			 if  pawn_square_check(new_square, false, color) == true
 						 			 	cell.piece.moves<<new_square
 						 			 	@sum_of_moves += 1
 						 			 end
 						 			@route_clear = false
 						 	end		 
 				end 
-
- 	#in here I will have to put a method that adds the possible moves if there is an en passant take available
-			@white_pawn_take_set.each do |move|
+			@pawn_take_set.each do |move|
 				new_square = [coordinates, move].transpose.map {  |y| y.reduce(:+) }
-				 if pawn_square_check(new_square, true, 'white')	== true
+				 if pawn_square_check(new_square, true, color)	== true
 				 	cell.piece.moves<<new_square
 				 	@sum_of_moves+= 1
 				 end
 			end
 	end
 
-	def black_pawn_moves(coordinates, cell)
-			cell.piece.moves = []
-			@black_pawn_take_set =  [[1,-1], [1, 1]]
-			@route_clear = true
-				while @route_clear
-					new_square = [coordinates, [1, 0]].transpose.map { |y| y.reduce(:+) }
-						 if pawn_square_check(new_square, false, 'black') == false
-						 	@route_clear = false
-						 elsif cell.piece.first_move == false
-						 	
-						 	cell.piece.moves<<new_square
-						 	@sum_of_moves+= 1
-						 	@route_clear = false
-						 else
-						 	cell.piece.moves<<new_square
-						 	@sum_of_moves += 1
-						 		new_square = [coordinates, [2, 0]].transpose.map { |y| y.reduce(:+) }	 
-						 			 if  pawn_square_check(new_square, false, 'black') == true
-						 			 	cell.piece.moves<<new_square
-						 			 	@sum_of_moves+= 1
-						 			 end
-						 			@route_clear = false
-						 	end		 
-				end 
-
-				#in here I will have to put a method that adds the possible moves if there is an en passant take available
-			@black_pawn_take_set.each do |move|
-				new_square = [coordinates, move].transpose.map {  |y| y.reduce(:+) }
-				 if pawn_square_check(new_square, true, 'black')	== true
-				 	cell.piece.moves<<new_square
-				 	@sum_of_moves+= 1
-				 end
-			end
-	end
-
-		def pawn_square_check(coordinates, can_take, color)
-			square = @board.grid[coordinates[0]][coordinates[1]]	
+	def pawn_square_check(coordinates, can_take, color)
+		square = @board.grid[coordinates[0]][coordinates[1]]	
 			if square_on_board(coordinates) == false
 				false
 			elsif can_take == false
 				cell_empty(square) ? true : false
 		 
-			else
-			#if square.enpass = true then return true? would that work?
-			#would the only pawns that were looking to move into the square during this method
-			#be ones that had the right to take en pass I think so. remember that this method is just listing the available 
-			#moves no there could also be other pawns that 
-				
-			if square.enpassant != false && square.enpassant_color == color
+			else				
+				if square.enpassant != false && square.enpassant_color == color
 					true	
-			elsif cell_empty(square)
-
+				elsif cell_empty(square)
 			   	false			
-			 elsif square.piece.instance_of?(King)
+			 	elsif square.piece.instance_of?(King)
 			 		false
-			 else		
+			 	else		
 			 	 square.piece.color == color ? false : true
-			end		
-		end
+				end		
+			end
 	end
 
 
@@ -432,7 +386,6 @@ def queen_moves(cell, coordinates, color)
 								elsif square.piece.instance_of?(King)
 								@clear_path = false												
 								else
-									puts "putting #{new_position} into available takes"
 										cell.piece.moves<<new_position
 										@clear_path = false
 								end								

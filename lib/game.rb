@@ -21,6 +21,7 @@ class Game
 		game_over = false
 		until game_over
 		puts "#{@player_turn.player_name} Input your choice"
+		all_available_moves(@player_turn.color)
 		choice = get_choice
 		@board.update_board(choice)
 		#run 'status check' here which would check for checks and stalemate? and clear enpassant
@@ -33,10 +34,11 @@ class Game
 	def get_choice
 		move_choice = gets.downcase.chomp
 		
-		if valid_move(move_choice, @player_turn.color) == false 
+		if correct_input(move_choice, @player_turn.color) == false 
 			move_choice = get_choice		
 		elsif legal_move(move_choice, @player_turn.color) == false
 			move_choice = get_choice 
+			#elsif player in check separate method check?
 		end
 			move_choice
 	end	
@@ -53,12 +55,11 @@ class Game
 end	
 
 
-bob = Game.new
-bob.create_players
-bob.new_game
-bob.play_game
-#bob.all_available_moves('white')
-#bob.all_available_moves('black')
+game = Game.new
+game.create_players
+game.new_game
+game.play_game
+
 
 	
 

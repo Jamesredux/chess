@@ -6,11 +6,13 @@ require_relative 'queen'
 require_relative 'king'
 require_relative 'bishop'
 require_relative 'knight'
+require_relative 'chess'
 
 
 
 class Board
 	include Draw
+	include Chess
 	
 	attr_accessor :grid
 
@@ -204,17 +206,10 @@ class Board
 	def promote(old_cell, new_cell)
 		puts "Your Pawn has reached the final rank. How would you like to promote it\ninput 'Q' for Queen, 'K' for knight, 'R' for rook or 'B' for bishop."
 		new_piece = choose_promotion
-		#need to get piece then change old_cell.piece to new
-
-
-		puts new_piece
 		piece_name = promote_piece(new_piece)
 		new_piece(old_cell, piece_name, old_cell.piece.color)
-		puts old_cell.inspect
-		
-		move_piece(old_cell, new_cell)
-		
-		
+		puts old_cell.inspect		
+		move_piece(old_cell, new_cell)		#technically this changes the piece before it moves, is this a problem
 	end
 
 	def choose_promotion
@@ -241,7 +236,7 @@ class Board
 		end		
 		piece_name
 	end
-
+=begin
 	def convert_choice(move_choice)
 		choice_array = move_choice.split('')
 		converted = []
@@ -289,7 +284,7 @@ class Board
 			7
 		end
 	end		
-
+=end
 
 end	
 
