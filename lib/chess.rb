@@ -308,19 +308,16 @@ end
 				end 	
 			end	
 			if cell.piece.instance_of?(King) && cell.piece.first_move == true
-					castle_move_set = [[0,2], [0,-2]]
+					castle_move_set = [[0,2], [0,-2]]				
+				if castle_check(coordinates, color, 'right')
 					right_castle_position = [coordinates, castle_move_set[0]].transpose.map { |y| y.reduce(:+)}
-					left_castle_position = [coordinates, castle_move_set[1]].transpose.map { |y| y.reduce(:+)}
-				if right_castle_check(cell, coordinates, color) == true
 					cell.piece.moves<<right_castle_position
 				end 	
-				if left_castle_check(cell, coordinates, color) == true
+				if castle_check(coordinates, color, 'left') == true
+					left_castle_position = [coordinates, castle_move_set[1]].transpose.map { |y| y.reduce(:+)}
 					cell.piece.moves<<left_castle_position
 				end 			
-
-			end
-
-					
+			end					
 	end	
 
 	def get_move_set(piece)
@@ -348,53 +345,42 @@ end
 	end
 
 
-	def right_castle_check(cell, coordinates, color)
-		row = coordinates[0]
-		column = coordinates[1]
-		r_square = @board.grid[row][column+1]
-		second_r_square = @board.grid[row][column+2]
-		if cell_empty(r_square) == true  && cell_empty(second_r_square) == true
-			rook_square = @board.grid[row][column+3]
-			if rook_square.piece.instance_of?(Rook)
-				if rook_square.piece.first_move == true
-						squares_to_check = [[row,4],[row,5],[row,6]]				
-						if squares_clear(squares_to_check, color)
-							true
-						end	
-				end	
-			end 	
-			
+ def castle_check(coordinates, color, side)
+ 		side == 'right' ? squares = [4, 5, 6, 7] : squares = [4, 3, 2, 1, 0]
+
+ 	  row = coordinates[0]
+		if castle_empty(row, squares[1..-2]) == true
+			rook_square = @board.grid[row][squares[-1]]
+			if rook_square.piece.instance_of?(Rook) && rook_square.piece.first_move == true
+				squares_to_check = []
+					squares[0..-2].each do |x|
+						a = [row, x]
+						squares_to_check<<a	
+					end	
+				if squares_clear(squares_to_check, color)
+					true
+				end
+			end
 		else
-			false
-		end 	
-		
-		
+			false	
+		end			
 		
 	end
 
-	def left_castle_check(cell, coordinates, color)
-		row = coordinates[0]
-		column = coordinates[1]
-		l_square = @board.grid[row][column-1]
-		second_l_square = @board.grid[row][column-2]
-		third_l_square = @board.grid[row][column-3]
-		if cell_empty(l_square) == true  && cell_empty(second_l_square) == true && cell_empty(third_l_square)
-			rook_square = @board.grid[row][column-4]
-			if rook_square.piece.instance_of?(Rook)
-				if rook_square.piece.first_move == true
-						squares_to_check = [[row,4],[row,3],[row,2],[row,1]]
-							if squares_clear(squares_to_check, color)
-								true
-							end	
-				end	
-			end 	
-		
-		else
-			false
-		end 	
-		
-		
-	end
+	def castle_empty(row, squares_array)
+			@squares_empty = true
+			squares_array.each do |x|
+				square = @board.grid[row][x]
+					if cell_empty(square) == false
+						@squares_empty = false
+					end 		
+			end	
+			@squares_empty
+
+	end 	
+
+
+
 
 	def squares_clear(squares_to_check, color) #for castling
 			@all_clear = true
