@@ -75,8 +75,10 @@ class Board
 		cell.symbol = cell.piece.symbol
 	end
 
+
 	
 	def update_board(move_choice)
+
 		coordinates = convert_choice(move_choice)
 		horizonal_move = (coordinates[1] - coordinates[3]).abs
 		vertical_move =  (coordinates[0] - coordinates[2]).abs
@@ -98,6 +100,11 @@ class Board
 			move_piece(old_cell, new_cell)
 		end	
 	end	
+
+	def check_status(move_choice, color)
+		puts move_choice
+		puts color
+	end
 
 	def move_piece(old_cell, new_cell)
 		#is it here that I will keep memorary of move in case I have to take back.
@@ -236,55 +243,4 @@ class Board
 		end		
 		piece_name
 	end
-=begin
-	def convert_choice(move_choice)
-		choice_array = move_choice.split('')
-		converted = []
-		choice_array.each do |x|
-			converted << convert_element(x)
-		end	
-			
-		reordered_choice = [converted[1], converted[0], converted[3], converted[2]]
-		reordered_choice
-	end
-
-	def convert_element(x)
-		number_coords = ['1','2','3','4','5','6','7','8']
-		letter_coords = ['a','b','c','d','e','f','g','h']
-		if number_coords.include? x 
-			number_convert(x)
-		elsif letter_coords.include? x 
-			letter_convert(x)
-		end		
-	end	
-
-	def number_convert(x)
-		num = x.to_i
-		new_num = 8 - num 
-		new_num
-	end
-	
-	def letter_convert(x)
-		case x
-		when 'a'	
-			0
-		when 'b'	
-			1
-		when 'c'	
-			2
-		when 'd'	
-			3
-		when 'e'	
-			4
-		when 'f'	
-			5
-		when 'g'	
-			6
-		when 'h'	
-			7
-		end
-	end		
-=end
-
-end	
-
+end

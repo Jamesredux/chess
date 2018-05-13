@@ -68,6 +68,7 @@ def legal_move(move_choice, color)
 			old_cell = @board.grid[@coordinates[0]][@coordinates[1]]
 			new_coordinates = [@coordinates[2], @coordinates[3]] 
 			if old_cell.piece.moves.include?(new_coordinates) == true
+				@board.check_status(move_choice, color)
 				true
 			else
 				puts "That is an invalid move"
@@ -158,6 +159,10 @@ end
 		
 	end
 
+	def change_square(startsquare, move)
+			new_coordinates = [startsquare, move].transpose.map { |y| y.reduce(:+) }
+	end
+
 
 	def all_available_moves(color)  #this method won't take color when running in game
 		@sum_of_moves = 0 #counter that goes up every time a move is added - if it stays at 0 then stalemate/checkmate
@@ -221,7 +226,7 @@ end
 			end 				
 			@route_clear = true
 				while @route_clear
-					new_square = [coordinates, @pawn_move].transpose.map { |y| y.reduce(:+) }
+					new_square =  change_square(coordinates, @pawn_move)
 						 if pawn_square_check(new_square, false, color) == false
 						 	@route_clear = false
 						 elsif cell.piece.first_move == false
@@ -231,7 +236,7 @@ end
 						 else
 						 	cell.piece.moves<<new_square
 						 	@sum_of_moves += 1
-						 		new_square = [coordinates, @double_move].transpose.map { |y| y.reduce(:+) }	 
+						 		new_square = change_square(coordinates, @double_move) 
 						 			 if  pawn_square_check(new_square, false, color) == true
 						 			 	cell.piece.moves<<new_square
 						 			 	@sum_of_moves += 1
@@ -240,7 +245,7 @@ end
 						 	end		 
 				end 
 			@pawn_take_set.each do |move|
-				new_square = [coordinates, move].transpose.map {  |y| y.reduce(:+) }
+				new_square = change_square(coordinates, move)#[coordinates, move].transpose.map {  |y| y.reduce(:+) }
 				 if pawn_square_check(new_square, true, color)	== true
 				 	cell.piece.moves<<new_square
 				 	@sum_of_moves+= 1
@@ -287,12 +292,13 @@ end
 				@clear_path =true
 				while @clear_path
 					
-						new_position = [start_square, move].transpose.map { |y| y.reduce(:+)}
+						new_position = change_square(start_square, move)#[start_square, move].transpose.map { |y| y.reduce(:+)}
 							if square_check(new_position, color) == false #if next square is off board or own color(blocked)
 								@clear_path = false
 							else square = @board.grid[new_position[0]][new_position[1]]	
 								if cell_empty(square) 
 									cell.piece.moves<<new_position
+									@sum_of_moves+= 1
 									if @single_move == true
 										@clear_path = false
 									else	
@@ -302,6 +308,7 @@ end
 								@clear_path = false												
 								else
 										cell.piece.moves<<new_position
+										@sum_of_moves+= 1
 										@clear_path = false
 								end								
 							end
@@ -310,12 +317,14 @@ end
 			if cell.piece.instance_of?(King) && cell.piece.first_move == true
 					castle_move_set = [[0,2], [0,-2]]				
 				if castle_check(coordinates, color, 'right')
-					right_castle_position = [coordinates, castle_move_set[0]].transpose.map { |y| y.reduce(:+)}
+					right_castle_position = change_square(coordinates, castle_move_set[0])#[coordinates, castle_move_set[0]].transpose.map { |y| y.reduce(:+)}
 					cell.piece.moves<<right_castle_position
+					@sum_of_moves+= 1
 				end 	
 				if castle_check(coordinates, color, 'left') == true
-					left_castle_position = [coordinates, castle_move_set[1]].transpose.map { |y| y.reduce(:+)}
+					left_castle_position = change_square(coordinates, castle_move_set[1])#[coordinates, castle_move_set[1]].transpose.map { |y| y.reduce(:+)}
 					cell.piece.moves<<left_castle_position
+					@sum_of_moves+= 1
 				end 			
 			end					
 	end	
@@ -484,7 +493,7 @@ end
 		@knight_move_set = [[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]]
 		@attacked_by_knight = false
 		 @knight_move_set.each do |move|
-		 	threat_square = [coordinates, move].transpose.map { |y| y.reduce(:+)}
+		 	threat_square = change_square(coordinates, move)
 				if threat_from_square(threat_square, Knight, color) == true	
 					@attacked_by_knight = true
 				end
@@ -501,7 +510,7 @@ end
 			@clear_path = true
 			@distance = 1
 				while @clear_path
-					next_square = [start_square, move].transpose.map { |y| y.reduce(:+) }	
+					next_square = change_square(start_square, move)#[start_square, move].transpose.map { |y| y.reduce(:+) }	
 						if square_check(next_square, color) == false	#checks if square is off board or occupied by piece of own color
 							@clear_path = false
 						else next_cell = @board.grid[next_square[0]][next_square[1]]
@@ -521,8 +530,8 @@ end
 								start_square = next_square
 	
 							else
-								puts "this method DOES get called sometimes"
-							@clear_path = false		
+								#the square is occupied by an opposition piece that can not take you.
+								@clear_path = false		
 							end
 						end
 				end		
@@ -538,32 +547,27 @@ end
 			@clear_path = true
 			@distance = 1
 				while @clear_path
-					next_square = [start_square, move].transpose.map { |y| y.reduce(:+) }
+					next_square = change_square(start_square, move)#[start_square, move].transpose.map { |y| y.reduce(:+) }
 						if square_check(next_square, color) == false	#checks if square is off board or occupied by piece of own color
 							@clear_path = false
 						else next_cell = @board.grid[next_square[0]][next_square[1]]
 							if next_cell.piece.instance_of?(Bishop) == true || next_cell.piece.instance_of?(Queen) == true
-									@diag_threat = true
-									@clear_path = false
-							#need to stop if hit other opposition piece9
+								@diag_threat = true
+								@clear_path = false
 							elsif 
-									next_cell.piece.instance_of?(King) == true && @distance == 1
-									puts "the king threatens the square diagonally"
-									@clear_path = false
-
-									@diag_threat = true
+								next_cell.piece.instance_of?(King) == true && @distance == 1
+								@clear_path = false
+								@diag_threat = true
 							elsif 
 								cell_empty(next_cell) == true
 								@distance += 1
 								start_square = next_square
-	
 							else
-								puts "this method DOES get called sometimes"
-							@clear_path = false		
+								#this should only be called when piece on square is an opposition piece that can not take you.
+								@clear_path = false		
 							end
 						end
 				end
-						
 		end
 		@diag_threat			
 	end
@@ -574,18 +578,14 @@ end
 		#for where the threat is coming from so it is the  mirror image
 		@take_set.each do |move|
 			start_square = coordinates
-				next_square = [start_square, move].transpose.map { |y| y.reduce(:+) }						
+				next_square = change_square(start_square, move)				
 						if square_check(next_square, color) == false	#checks if square is off board or occupied by piece of own color
 							next
 						else next_cell = @board.grid[next_square[0]][next_square[1]]
-							if next_cell.piece.instance_of?(Pawn) == true 
-									puts  "a square is under pawn threat" 
+							if next_cell.piece.instance_of?(Pawn) == true  
 									@pawn_threat = true
 							end
-						end
-				
-				
-						
+						end					
 		end
 		@pawn_threat			
 	end
