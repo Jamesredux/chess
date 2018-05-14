@@ -78,12 +78,10 @@ class Board
 
 	
 	def update_board(move_choice)
-
 		coordinates = convert_choice(move_choice)
 		horizonal_move = (coordinates[1] - coordinates[3]).abs
 		vertical_move =  (coordinates[0] - coordinates[2]).abs
 		old_cell = grid[coordinates[0]][coordinates[1]]
-		puts old_cell.piece.inspect
 		color_moving = old_cell.piece.color
 		new_cell = grid[coordinates[2]][coordinates[3]]
 		
@@ -100,11 +98,6 @@ class Board
 			move_piece(old_cell, new_cell)
 		end	
 	end	
-
-	def check_status(move_choice, color)
-		puts move_choice
-		puts color
-	end
 
 	def move_piece(old_cell, new_cell)
 		#is it here that I will keep memorary of move in case I have to take back.

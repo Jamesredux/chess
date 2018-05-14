@@ -68,7 +68,6 @@ def legal_move(move_choice, color)
 			old_cell = @board.grid[@coordinates[0]][@coordinates[1]]
 			new_coordinates = [@coordinates[2], @coordinates[3]] 
 			if old_cell.piece.moves.include?(new_coordinates) == true
-				@board.check_status(move_choice, color)
 				true
 			else
 				puts "That is an invalid move"
@@ -607,5 +606,6 @@ end
 		@threat_present		
 		
 	end
+
 
 end	

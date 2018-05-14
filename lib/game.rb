@@ -22,13 +22,19 @@ class Game
 		until game_over
 		puts "#{@player_turn.player_name} Input your choice"
 		all_available_moves(@player_turn.color)
-		choice = get_choice
-		@board.update_board(choice)
+		player_move
 		#run 'status check' here which would check for checks and stalemate? and clear enpassant
-		@board.status_check(@player_turn.color)
+		@board.status_check(@player_turn.color) #this removes enpassent tags at the moment
 		switch_player
 		@board.draw_board
 		end
+	end
+
+	def player_move
+		choice = get_choice
+		#@board_snapshot = @board.clone #this doesn't work at present because it creates a copy of the grid but puts all the same objects in it. have 
+		#to map and clone individually or something.
+		@board.update_board(choice)
 	end
 	
 	def get_choice
@@ -38,10 +44,11 @@ class Game
 			move_choice = get_choice		
 		elsif legal_move(move_choice, @player_turn.color) == false
 			move_choice = get_choice 
-			#elsif player in check separate method check?
 		end
 			move_choice
 	end	
+
+
 
 	def switch_player
 		if @player_turn == @player_1
