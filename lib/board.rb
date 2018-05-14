@@ -77,13 +77,13 @@ class Board
 
 
 	
-	def update_board(move_choice)
-		coordinates = convert_choice(move_choice)
+	def update_board(coordinates, old_cell, new_cell)
+		
 		horizonal_move = (coordinates[1] - coordinates[3]).abs
 		vertical_move =  (coordinates[0] - coordinates[2]).abs
-		old_cell = grid[coordinates[0]][coordinates[1]]
+		
 		color_moving = old_cell.piece.color
-		new_cell = grid[coordinates[2]][coordinates[3]]
+		
 		
 		if new_cell.enpassant != false
 			enpassant_take(coordinates, old_cell, new_cell)

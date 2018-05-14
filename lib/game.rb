@@ -24,18 +24,70 @@ class Game
 		all_available_moves(@player_turn.color)
 		player_move
 		#run 'status check' here which would check for checks and stalemate? and clear enpassant
-		@board.status_check(@player_turn.color) #this removes enpassent tags at the moment
+		@board.status_check(@player_turn.color) #this removes enpassant tags at the moment
 		switch_player
 		@board.draw_board
 		end
 	end
 
 	def player_move
-		choice = get_choice
-		#@board_snapshot = @board.clone #this doesn't work at present because it creates a copy of the grid but puts all the same objects in it. have 
-		#to map and clone individually or something.
-		@board.update_board(choice)
+		move_ok = false
+		while move_ok == false
+			choice = get_choice
+			coordinates = convert_choice(choice)
+			old_cell = @board.grid[coordinates[0]][coordinates[1]]
+			new_cell = @board.grid[coordinates[2]][coordinates[3]]
+			snapshot(old_cell, new_cell)
+			@board.update_board(coordinates, old_cell, new_cell)
+			if in_check?(@player_turn.color)
+				puts "You can not move into check"
+				revert_board(old_cell, new_cell)
+			else
+				move_ok = true
+			end		
+		end	
 	end
+
+	def snapshot(old_cell, new_cell)
+		@old_cell_snapshot = cell_memory(old_cell)
+		@new_cell_snapshot = cell_memory(new_cell)
+		
+	end
+
+	def cell_memory(cell)
+		cell_contents =  []
+		cell_contents<<cell.symbol
+		cell_contents<<cell.piece
+		if cell.piece != 0
+			cell_contents<<cell.piece.first_move
+		end	
+		cell_contents<<cell.enpassant
+		cell_contents<<cell.enpassant_color
+		cell_contents
+	end	
+
+
+
+	def revert_board(old_cell, new_cell)
+		revert_cell(old_cell, @old_cell_snapshot)
+		revert_cell(new_cell, @new_cell_snapshot)
+	end
+
+	def revert_cell(cell, contents)
+		puts "cell to be reverted #{cell}"
+		puts "contents to be put back #{contents}"
+		cell.symbol = contents[0]
+		cell.piece = contents[1]
+		if cell.piece != 0
+			cell.piece.first_move = contents[2]
+			cell.enpassant = contents[3]
+			cell.enpassant = contents[4]
+		else
+			cell.enpassant = contents[2]
+			cell.enpassant = contents[3]
+		end	
+
+	end	
 	
 	def get_choice
 		move_choice = gets.downcase.chomp

@@ -607,5 +607,38 @@ end
 		
 	end
 
+	def in_check?(color)
+		king_coordinates = find_king(color)
+		puts "the king is on #{king_coordinates.inspect}"
+		if under_attack?(king_coordinates, color)
+			puts "the king is under attack!!!!"
+			true
+		else
+			false	
+		end	
+		
+		
+	end
+
+		def find_king(color)
+		
+
+		@board.grid.each_with_index do |row, index|
+			x_coord = index
+			row.each_with_index do |cell, index|
+				y_coord = index
+				if cell.piece == 0
+					next
+				elsif cell.piece.color == color && cell.piece.instance_of?(King)
+						square = [x_coord, y_coord]
+						@location_of_king = square
+				else
+					next 
+				end			
+			end
+		end
+		@location_of_king
+	end
+
 
 end	
