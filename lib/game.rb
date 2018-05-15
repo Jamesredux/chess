@@ -57,12 +57,13 @@ class Game
 	def cell_memory(cell)
 		cell_contents =  []
 		cell_contents<<cell.symbol
+		cell_contents<<cell.enpassant
+		cell_contents<<cell.enpassant_color
 		cell_contents<<cell.piece
 		if cell.piece != 0
 			cell_contents<<cell.piece.first_move
 		end	
-		cell_contents<<cell.enpassant
-		cell_contents<<cell.enpassant_color
+		
 		cell_contents
 	end	
 
@@ -74,20 +75,27 @@ class Game
 	end
 
 	def revert_cell(cell, contents)
-		puts "cell to be reverted #{cell}"
-		puts "contents to be put back #{contents}"
 		cell.symbol = contents[0]
-		cell.piece = contents[1]
+		if cell.enpassant != false && cell.enpassant.size == 3
+			cell_coords = cell.enpassant[0..1]
+			contents[2] == 'white' ? cell_color = 'black' : cell_color = 'white'
+			replace_enpassant_pawn(cell_coords, cell_color)
+				puts "enpassant take attempted that will have to be reverted"
+		end
+		cell.enpassant = contents[1]
+		cell.enpassant_color = contents[2]
+		cell.piece = contents[3]
 		if cell.piece != 0
-			cell.piece.first_move = contents[2]
-			cell.enpassant = contents[3]
-			cell.enpassant = contents[4]
-		else
-			cell.enpassant = contents[2]
-			cell.enpassant = contents[3]
+			cell.piece.first_move = contents[4]
 		end	
 
 	end	
+
+	def replace_enpassant_pawn(coords, color)
+		cell = @board.grid[coords[0]][coords[1]]
+		@board.new_piece(cell, Pawn, color)
+		
+	end
 	
 	def get_choice
 		move_choice = gets.downcase.chomp

@@ -100,8 +100,6 @@ class Board
 	end	
 
 	def move_piece(old_cell, new_cell)
-		#is it here that I will keep memorary of move in case I have to take back.
-		#store old cell piece
 		piece = old_cell.piece
 		update_cell(new_cell, piece)
 		empty_cell(old_cell)
@@ -146,9 +144,10 @@ class Board
 	end
 
 	def enpassant_take(coordinates, old_cell, new_cell)
-		puts "enpassant take"
+		puts "Enpassant take"
 		cell_to_empty = grid[new_cell.enpassant[0]][new_cell.enpassant[1]]
 		empty_cell(cell_to_empty)
+		new_cell.enpassant << 9
 		move_piece(old_cell, new_cell)
 	end
 
