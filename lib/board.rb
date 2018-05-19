@@ -147,7 +147,7 @@ class Board
 		puts "Enpassant take"
 		cell_to_empty = grid[new_cell.enpassant[0]][new_cell.enpassant[1]]
 		empty_cell(cell_to_empty)
-		new_cell.enpassant << 9
+		new_cell.enpassant << 9 #works as a tag to be identified in revert cell if this move has to be taken back.
 		move_piece(old_cell, new_cell)
 	end
 
@@ -177,13 +177,12 @@ class Board
 		update_cell(cell)
 	end
 
-	def status_check(color) #that will be the color that has just moved.
+	def clean_board(color) #that will be the color that has just moved.
 			grid.each do |row|
 				row.each do |cell|
 				clear_enpassant(cell, color)
 				end
-			end	
-
+			end		
 	end
 
 	def clear_enpassant(cell, color)

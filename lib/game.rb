@@ -20,14 +20,29 @@ class Game
 	def play_game
 		game_over = false
 		until game_over
-		puts "#{@player_turn.player_name} Input your choice"
+		player_greeting
 		all_available_moves(@player_turn.color)
 		player_move
-		#run 'status check' here which would check for checks and stalemate? and clear enpassant
-		@board.status_check(@player_turn.color) #this removes enpassant tags at the moment
+		
+		@board.clean_board(@player_turn.color) #this removes enpassant tags at the moment
 		switch_player
+			if in_check?(@player_turn.color)
+				#checkmate check here
+				@player_turn.in_check = true
+			else 
+				@player_turn.in_check = false	
+			end
+
 		@board.draw_board
 		end
+	end
+
+	def player_greeting
+		if @player_turn.in_check == false 
+			puts "#{@player_turn.player_name} Input your choice"
+		else
+			puts "******#{@player_turn.player_name} IS IN CHECK****** \n#{@player_turn.player_name} Input your choice"
+		end	
 	end
 
 	def player_move
@@ -39,8 +54,8 @@ class Game
 			new_cell = @board.grid[coordinates[2]][coordinates[3]]
 			snapshot(old_cell, new_cell)
 			@board.update_board(coordinates, old_cell, new_cell)
-			if in_check?(@player_turn.color)
-				puts "You can not move into check"
+			if in_check?(@player_turn.color)	
+				puts "That move is illegal, it would leave you in check."
 				revert_board(old_cell, new_cell)
 			else
 				move_ok = true
