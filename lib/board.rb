@@ -86,14 +86,16 @@ class Board
 		
 		
 		if new_cell.enpassant != false
+			puts "#{coordinates.inspect} is giving me shit"
 			enpassant_take(coordinates, old_cell, new_cell)
 		elsif old_cell.piece.instance_of?(Pawn) && last_row(coordinates)
 				promote(old_cell, new_cell)	
 		elsif old_cell.piece.instance_of?(King) && horizonal_move == 2
 			castle(coordinates, old_cell, new_cell)
-		elsif old_cell.piece.instance_of?(Pawn) && vertical_move == 2
-			enpassant_check(coordinates, old_cell, new_cell, color_moving)
-			move_piece(old_cell, new_cell)	
+		#elsif old_cell.piece.instance_of?(Pawn) && vertical_move == 2  #this was a special move that left tags for enpassant check but I
+		#have taken it out of update board as update board is used for dummy updates and you only have to leave the tags after a real move
+		#	enpassant_check(coordinates, old_cell, new_cell, color_moving)
+		#	move_piece(old_cell, new_cell)	
 		else	
 			move_piece(old_cell, new_cell)
 		end	

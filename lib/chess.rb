@@ -56,121 +56,38 @@ module Chess
 
 
 
-def legal_move(move_choice, color)
-		@coordinates = convert_choice(move_choice)
-		if players_piece?(@coordinates, color) == false  
-			puts "You do not have a piece on that square."
-			false
-		elsif land_on_own_piece?(@coordinates, color) == false   
-			puts "You can not move to a square you already occupy"
-			false	 
-		elsif
-			old_cell = @board.grid[@coordinates[0]][@coordinates[1]]
-			new_coordinates = [@coordinates[2], @coordinates[3]] 
-			if old_cell.piece.moves.include?(new_coordinates) == true
-				true
-			else
-				puts "That is an invalid move"
+	def legal_move(move_choice, color)
+			@coordinates = convert_choice(move_choice)
+			if players_piece?(@coordinates, color) == false  
+				puts "You do not have a piece on that square."
 				false
-			end	
-		end
-
-end	
-
-	def convert_choice(move_choice)
-		choice_array = move_choice.split('')
-		converted = []
-		choice_array.each do |x|
-			converted << convert_element(x)
-		end	
-			
-		reordered_choice = [converted[1], converted[0], converted[3], converted[2]]
-		reordered_choice
-	end
-
-	def convert_element(x)
-		number_coords = ['1','2','3','4','5','6','7','8']
-		letter_coords = ['a','b','c','d','e','f','g','h']
-		if number_coords.include? x 
-			number_convert(x)
-		elsif letter_coords.include? x 
-			letter_convert(x)
-		end		
+			elsif land_on_own_piece?(@coordinates, color) == false   
+				puts "You can not move to a square you already occupy"
+				false	 
+			elsif
+				old_cell = @board.grid[@coordinates[0]][@coordinates[1]]
+				new_coordinates = [@coordinates[2], @coordinates[3]] 
+				if old_cell.piece.moves.include?(new_coordinates) == true
+					true
+				else
+					puts "That is an invalid move"
+					false
+				end	
+			end
 	end	
 
-	def number_convert(x)
-		num = x.to_i
-		new_num = 8 - num 
-		new_num
-	end
-	
-	def letter_convert(x)
-		case x
-		when 'a'	
-			0
-		when 'b'	
-			1
-		when 'c'	
-			2
-		when 'd'	
-			3
-		when 'e'	
-			4
-		when 'f'	
-			5
-		when 'g'	
-			6
-		when 'h'	
-			7
-		end
-	end		
-
- def players_piece?(coordinates, color)  #reruse this with other methods
-		x = coordinates[0]
-		y = coordinates[1]
-		if @board.grid[x][y].piece == 0 || @board.grid[x][y].piece.color != color
-			false
-		else
-			true
-		end		 	
-	end	
-
-	def land_on_own_piece?(coordinates, color)   #incorporate this into legal move check - just add that last square is not own piece
-		x = coordinates[2]
-		y = coordinates[3]
-		if @board.grid[x][y].piece == 0
-			true
-		elsif 
-			@board.grid[x][y].piece.color == color 
-		  false
-		else
-			true
-		end		
-	end	
-
-	def cell_empty(cell)
-		if cell.piece == 0
-			true
-		else
-			false
-		end		
-		
-		
-	end
 
 	def change_square(startsquare, move)
 			new_coordinates = [startsquare, move].transpose.map { |y| y.reduce(:+) }
 	end
 
 
-	def all_available_moves(color)  #this method won't take color when running in game
+	def all_available_moves(color) 
 		@sum_of_moves = 0 #counter that goes up every time a move is added - if it stays at 0 then stalemate/checkmate
-		#haven't finished this, would it be better to run a method for all piece moves to see it they are all empty.?
 		squares = squares_with_piece(color)
 		squares.each do |x|
 			map_moves(x, color)
 		end
-		puts "this is the number of moves = #{@sum_of_moves}"
 	end	
 
 
@@ -195,13 +112,6 @@ end
 		@location_of_pieces
 	end	
 
-=begin #I don't think this is called by anything
-	def piece_check(coordinates, color)
-		puts @board.grid[coordinates[0]][coordinates[1]].piece 
-		
-	end
-=end 
-
 	def map_moves(coordinates, color)
 		cell = @board.grid[coordinates[0]][coordinates[1]]
 		if cell.piece.instance_of?(Pawn) 
@@ -209,10 +119,9 @@ end
 		else
 			piece_moves(cell, coordinates, color)
 		end 		
-
 	end		
 
- def pawn_moves(coordinates, cell, color)
+	def pawn_moves(coordinates, cell, color)
 		cell.piece.moves = []	
 			if color == 'white'
 					@pawn_take_set =  [[-1,-1], [-1, 1]]
@@ -230,28 +139,21 @@ end
 						 	@piece_can_move = false
 						 elsif cell.piece.first_move == false
 						 	add_move(cell, coordinates, new_grid)
-						 	#cell.piece.moves<<new_grid
-						 	#@sum_of_moves+= 1
 						 	@piece_can_move = false
 						 else
 						 	add_move(cell, coordinates, new_grid)
-						 	#cell.piece.moves<<new_grid
-						 	#@sum_of_moves += 1
 						 		new_grid = change_square(coordinates, @double_move) 
 						 			 if  pawn_square_check(new_grid, false, color) == true
 						 			 	add_move(cell, coordinates, new_grid)
-						 			 	#cell.piece.moves<<new_grid
-						 			 	#@sum_of_moves += 1
 						 			 end
 						 			@piece_can_move = false
 						 	end		 
 				end 
+
 			@pawn_take_set.each do |move|
 				new_grid = change_square(coordinates, move)
 				 if pawn_square_check(new_grid, true, color)	== true
 				 	add_move(cell, coordinates, new_grid)
-				 	#cell.piece.moves<<new_grid
-				 	#@sum_of_moves+= 1
 				 end
 			end
 	end
@@ -276,16 +178,12 @@ end
 			end
 	end
 
-
-
 	def piece_moves(cell, coordinates, color)
 		piece = cell.piece
 		log_moves(cell, coordinates, piece, color)		
 	end	
 
-
-	def log_moves(cell, coordinates, piece, color)
-		
+	def log_moves(cell, coordinates, piece, color)		
 		cell.piece.moves = []
 		@single_move = single_move?(piece)
 		@move_set = get_move_set(piece)
@@ -337,14 +235,59 @@ end
 			snapshot(old_cell, new_cell)
 			@board.update_board(move_coordinates, old_cell, new_cell)
 
-		  if	in_check?(@player_turn.color)	
-			  puts "That move is illegal, it would leave you in check."
+		  if	in_check?(@player_turn.color)
 				revert_board(old_cell, new_cell)
 			else
 				revert_board(old_cell, new_cell)
 				old_cell.piece.moves<<new_grid
 				@sum_of_moves += 1	
 			end		
+	end
+
+	def snapshot(old_cell, new_cell)
+		@old_cell_snapshot = cell_memory(old_cell)
+		@new_cell_snapshot = cell_memory(new_cell)
+		
+	end
+
+	def cell_memory(cell)
+		cell_contents =  []
+		cell_contents<<cell.symbol
+		cell_contents<<cell.enpassant
+		cell_contents<<cell.enpassant_color
+		cell_contents<<cell.piece
+		if cell.piece != 0
+			cell_contents<<cell.piece.first_move
+		end	
+		
+		cell_contents
+	end	
+
+	def revert_board(old_cell, new_cell)
+		revert_cell(old_cell, @old_cell_snapshot)
+		revert_cell(new_cell, @new_cell_snapshot)
+	end
+
+	def revert_cell(cell, contents)
+		cell.symbol = contents[0]
+		if cell.enpassant != false && cell.enpassant.size == 3
+			cell_coords = cell.enpassant[0..1]
+			contents[2] == 'white' ? cell_color = 'black' : cell_color = 'white'
+			replace_enpassant_pawn(cell_coords, cell_color)
+				puts "enpassant take attempted that will have to be reverted"
+		end
+		cell.enpassant = contents[1]
+		cell.enpassant_color = contents[2]
+		cell.piece = contents[3]
+		if cell.piece != 0
+			cell.piece.first_move = contents[4]
+		end	
+
+	end	
+
+	def replace_enpassant_pawn(coords, color)
+		cell = @board.grid[coords[0]][coords[1]]
+		@board.new_piece(cell, Pawn, color)	
 	end
 
 
@@ -404,7 +347,6 @@ end
 					end 		
 			end	
 			@squares_empty
-
 	end 	
 
 
@@ -418,17 +360,14 @@ end
 								@all_clear = false
 							end
 			end
-			puts "all_clear is #{@all_clear}"
 		@all_clear
-		#should find way to stop itteration after first under attack					
-		
+		#should find way to stop itteration after first under attack							
 	end
 
 
 	def square_check(coordinates, color)
 		if square_on_board(coordinates) == false
 		 false
-
 		else
 		 	square = @board.grid[coordinates[0]][coordinates[1]]	
 				if cell_empty(square)
@@ -440,7 +379,6 @@ end
 			  #	puts "**** I PUT YOU IN CHECK  *****"
 			  	#this doesn't work at present at this is called before each move -
 			  	# to work it would have to be called after each move.
-			  #	false  
 			  end 	
 		end
 	end
@@ -487,17 +425,13 @@ end
 			true
 		elsif 
 				straight_attack(coordinates, color) == true
-				puts "straight attack!!"
 				true
 		elsif 
 				diag_attack(coordinates, color) == true
-				puts "diag attack"
 				true
 		elsif 
 				pawn_attack(coordinates, color) == true
-				puts "pawn attack"
 				true
-											
 		else	
 			false
 		end
@@ -535,7 +469,7 @@ end
 							#need to stop if hit other opposition piece9
 							elsif 
 									next_cell.piece.instance_of?(King) == true && @distance == 1
-									puts "the king threatens the square"
+									#puts "the king threatens the square"
 									@clear_path = false
 
 									@straight_threat = true
@@ -625,16 +559,14 @@ end
 
 	def in_check?(color)
 		king_coordinates = find_king(color)
-		#puts "the king is on #{king_coordinates.inspect}"
 		if under_attack?(king_coordinates, color)
-			puts "the king is under attack!!!!"
 			true
 		else
 			false	
 		end		
 	end
 
-		def find_king(color)
+	def find_king(color)
 		
 
 		@board.grid.each_with_index do |row, index|
@@ -653,6 +585,89 @@ end
 		end
 		@location_of_king
 	end
+
+		def convert_choice(move_choice)
+		choice_array = move_choice.split('')
+		converted = []
+		choice_array.each do |x|
+			converted << convert_element(x)
+		end	
+			
+		reordered_choice = [converted[1], converted[0], converted[3], converted[2]]
+		reordered_choice
+	end
+
+	def convert_element(x)
+		number_coords = ['1','2','3','4','5','6','7','8']
+		letter_coords = ['a','b','c','d','e','f','g','h']
+		if number_coords.include? x 
+			number_convert(x)
+		elsif letter_coords.include? x 
+			letter_convert(x)
+		end		
+	end	
+
+	def number_convert(x)
+		num = x.to_i
+		new_num = 8 - num 
+		new_num
+	end
+	
+	def letter_convert(x)
+		case x
+		when 'a'	
+			0
+		when 'b'	
+			1
+		when 'c'	
+			2
+		when 'd'	
+			3
+		when 'e'	
+			4
+		when 'f'	
+			5
+		when 'g'	
+			6
+		when 'h'	
+			7
+		end
+	end		
+
+ def players_piece?(coordinates, color)  #reruse this with other methods
+		x = coordinates[0]
+		y = coordinates[1]
+		if @board.grid[x][y].piece == 0 || @board.grid[x][y].piece.color != color
+			false
+		else
+			true
+		end		 	
+	end	
+
+	def land_on_own_piece?(coordinates, color)   #incorporate this into legal move check - just add that last square is not own piece
+		x = coordinates[2]
+		y = coordinates[3]
+		if @board.grid[x][y].piece == 0
+			true
+		elsif 
+			@board.grid[x][y].piece.color == color 
+		  false
+		else
+			true
+		end		
+	end	
+
+	def cell_empty(cell)
+		if cell.piece == 0
+			true
+		else
+			false
+		end		
+		
+		
+	end
+
+
 
 
 end	

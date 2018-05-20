@@ -24,8 +24,11 @@ class Game
 		until game_over
 		player_greeting
 		all_available_moves(@player_turn.color)
+		if @sum_of_moves == 0 
+			puts "Stalemate #{player_turn} has no legal moves -- game over"
+			game_over = true
+		end	
 		player_move
-		
 		@board.clean_board(@player_turn.color) #this removes enpassant tags at the moment
 		switch_player
 			if in_check?(@player_turn.color)
@@ -49,23 +52,26 @@ class Game
 
 	def player_move
 
-		move_ok = false
-		while move_ok == false
+		#move_ok = false
+		#while move_ok == false
 			choice = get_choice
 
 			coordinates = convert_choice(choice)
+			vertical_move =  (coordinates[0] - coordinates[2]).abs
 			old_cell = @board.grid[coordinates[0]][coordinates[1]]
-		#	puts  "old cell #{old_cell.inspect}"
 			new_cell = @board.grid[coordinates[2]][coordinates[3]]
-			snapshot(old_cell, new_cell)
+		#	snapshot(old_cell, new_cell)
 			@board.update_board(coordinates, old_cell, new_cell)
-			if in_check?(@player_turn.color)	
-				puts "That move is illegal, it would leave you in check."
-				revert_board(old_cell, new_cell)
-			else
-				move_ok = true
-			end		
-		end	
+			if old_cell.piece.instance_of?(Pawn) && vertical_move == 2
+				@board.enpassant_check(coordinates, old_cell, new_cell, @player_turn.color)
+			end	
+		#	if in_check?(@player_turn.color)	
+		#		puts "That move is illegal, it would leave you in check."
+		#		revert_board(old_cell, new_cell)
+		#	else
+		#		move_ok = true
+		#	end		
+		#end	
 
 	end
 
