@@ -1,6 +1,7 @@
 require_relative 'board'
 require_relative 'player'
 require_relative 'chess'
+require_relative "../save/save"
 
 class Game
 	include Chess
@@ -9,6 +10,7 @@ class Game
 	def new_game
 		@board = Board.new
 		@board.draw_board
+		
 	end
 
 	def create_players
@@ -46,11 +48,14 @@ class Game
 	end
 
 	def player_move
+
 		move_ok = false
 		while move_ok == false
 			choice = get_choice
+
 			coordinates = convert_choice(choice)
 			old_cell = @board.grid[coordinates[0]][coordinates[1]]
+		#	puts  "old cell #{old_cell.inspect}"
 			new_cell = @board.grid[coordinates[2]][coordinates[3]]
 			snapshot(old_cell, new_cell)
 			@board.update_board(coordinates, old_cell, new_cell)
@@ -61,6 +66,7 @@ class Game
 				move_ok = true
 			end		
 		end	
+
 	end
 
 	def snapshot(old_cell, new_cell)

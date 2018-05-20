@@ -223,31 +223,35 @@ end
 					@pawn_move = [1, 0]
 					@double_move = [2, 0]
 			end 				
-			@route_clear = true
-				while @route_clear
-					new_square =  change_square(coordinates, @pawn_move)
-						 if pawn_square_check(new_square, false, color) == false
-						 	@route_clear = false
+			@piece_can_move = true
+				while @piece_can_move
+					new_grid =  change_square(coordinates, @pawn_move)
+						 if pawn_square_check(new_grid, false, color) == false
+						 	@piece_can_move = false
 						 elsif cell.piece.first_move == false
-						 	cell.piece.moves<<new_square
-						 	@sum_of_moves+= 1
-						 	@route_clear = false
+						 	add_move(cell, coordinates, new_grid)
+						 	#cell.piece.moves<<new_grid
+						 	#@sum_of_moves+= 1
+						 	@piece_can_move = false
 						 else
-						 	cell.piece.moves<<new_square
-						 	@sum_of_moves += 1
-						 		new_square = change_square(coordinates, @double_move) 
-						 			 if  pawn_square_check(new_square, false, color) == true
-						 			 	cell.piece.moves<<new_square
-						 			 	@sum_of_moves += 1
+						 	add_move(cell, coordinates, new_grid)
+						 	#cell.piece.moves<<new_grid
+						 	#@sum_of_moves += 1
+						 		new_grid = change_square(coordinates, @double_move) 
+						 			 if  pawn_square_check(new_grid, false, color) == true
+						 			 	add_move(cell, coordinates, new_grid)
+						 			 	#cell.piece.moves<<new_grid
+						 			 	#@sum_of_moves += 1
 						 			 end
-						 			@route_clear = false
+						 			@piece_can_move = false
 						 	end		 
 				end 
 			@pawn_take_set.each do |move|
-				new_square = change_square(coordinates, move)#[coordinates, move].transpose.map {  |y| y.reduce(:+) }
-				 if pawn_square_check(new_square, true, color)	== true
-				 	cell.piece.moves<<new_square
-				 	@sum_of_moves+= 1
+				new_grid = change_square(coordinates, move)
+				 if pawn_square_check(new_grid, true, color)	== true
+				 	add_move(cell, coordinates, new_grid)
+				 	#cell.piece.moves<<new_grid
+				 	#@sum_of_moves+= 1
 				 end
 			end
 	end
@@ -287,46 +291,62 @@ end
 		@move_set = get_move_set(piece)
 		
 			@move_set.each do |move|
-				start_square = coordinates
-				@clear_path =true
-				while @clear_path
+				start_grid = coordinates
+				@piece_can_move =true
+				while @piece_can_move
 					
-						new_position = change_square(start_square, move)#[start_square, move].transpose.map { |y| y.reduce(:+)}
-							if square_check(new_position, color) == false #if next square is off board or own color(blocked)
-								@clear_path = false
-							else square = @board.grid[new_position[0]][new_position[1]]	
-								if cell_empty(square) 
-									cell.piece.moves<<new_position
-									@sum_of_moves+= 1
+						new_grid = change_square(start_grid, move)
+							if square_check(new_grid, color) == false #if next square is off board or own color(blocked)
+								@piece_can_move = false
+							else new_cell = @board.grid[new_grid[0]][new_grid[1]]	
+								if cell_empty(new_cell) 
+									add_move(cell, coordinates, new_grid)
 									if @single_move == true
-										@clear_path = false
-									else	
-										start_square = new_position
+										@piece_can_move = false
+									else
+										start_grid = new_grid
 									end	
-								elsif square.piece.instance_of?(King)
-								@clear_path = false												
+								elsif new_cell.piece.instance_of?(King) #stops taking of king
+									@piece_can_move = false												
 								else
-										cell.piece.moves<<new_position
-										@sum_of_moves+= 1
-										@clear_path = false
+										add_move(cell, coordinates, new_grid)
+										@piece_can_move = false
 								end								
 							end
 				end 	
 			end	
+			#i have not added the add move method to castling as this method already checks if any of the possible moves put someone in check.
 			if cell.piece.instance_of?(King) && cell.piece.first_move == true
 					castle_move_set = [[0,2], [0,-2]]				
 				if castle_check(coordinates, color, 'right')
-					right_castle_position = change_square(coordinates, castle_move_set[0])#[coordinates, castle_move_set[0]].transpose.map { |y| y.reduce(:+)}
+					right_castle_position = change_square(coordinates, castle_move_set[0])
 					cell.piece.moves<<right_castle_position
 					@sum_of_moves+= 1
 				end 	
 				if castle_check(coordinates, color, 'left') == true
-					left_castle_position = change_square(coordinates, castle_move_set[1])#[coordinates, castle_move_set[1]].transpose.map { |y| y.reduce(:+)}
+					left_castle_position = change_square(coordinates, castle_move_set[1])
 					cell.piece.moves<<left_castle_position
 					@sum_of_moves+= 1
 				end 			
 			end					
 	end	
+
+	def add_move(old_cell, start_grid, new_grid)
+			new_cell = @board.grid[new_grid[0]][new_grid[1]]	
+		  move_coordinates = start_grid + new_grid
+			snapshot(old_cell, new_cell)
+			@board.update_board(move_coordinates, old_cell, new_cell)
+
+		  if	in_check?(@player_turn.color)	
+			  puts "That move is illegal, it would leave you in check."
+				revert_board(old_cell, new_cell)
+			else
+				revert_board(old_cell, new_cell)
+				old_cell.piece.moves<<new_grid
+				@sum_of_moves += 1	
+			end		
+	end
+
 
 	def get_move_set(piece)
 		if piece.instance_of?(Queen)
@@ -414,6 +434,7 @@ end
 				if cell_empty(square)
 					true #do I need this
 				elsif square.piece.color == color
+
 			    false
 			  #elsif square.piece.instance_of?(King)
 			  #	puts "**** I PUT YOU IN CHECK  *****"
@@ -459,7 +480,7 @@ end
 	# a situation when the king is not under attack.
 
 	def under_attack?(coordinates, color)
-		puts "checking if #{coordinates.inspect} is under attack"
+		#puts "checking if #{coordinates.inspect} is under attack"
 		#add check is enpassant attack
 		if attack_from_knight(coordinates, color) == true
 			puts "under attack from knight"
@@ -480,11 +501,6 @@ end
 		else	
 			false
 		end
-			
-		
-
-
-		
 
 	end	
 
@@ -609,15 +625,13 @@ end
 
 	def in_check?(color)
 		king_coordinates = find_king(color)
-		puts "the king is on #{king_coordinates.inspect}"
+		#puts "the king is on #{king_coordinates.inspect}"
 		if under_attack?(king_coordinates, color)
 			puts "the king is under attack!!!!"
 			true
 		else
 			false	
-		end	
-		
-		
+		end		
 	end
 
 		def find_king(color)
