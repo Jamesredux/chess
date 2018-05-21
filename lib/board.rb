@@ -88,8 +88,8 @@ class Board
 		if new_cell.enpassant != false
 			puts "#{coordinates.inspect} is giving me shit"
 			enpassant_take(coordinates, old_cell, new_cell)
-		elsif old_cell.piece.instance_of?(Pawn) && last_row(coordinates)
-				promote(old_cell, new_cell)	
+		#elsif old_cell.piece.instance_of?(Pawn) && last_row(coordinates)
+		#		promote(old_cell, new_cell)	
 		elsif old_cell.piece.instance_of?(King) && horizonal_move == 2
 			castle(coordinates, old_cell, new_cell)
 		#elsif old_cell.piece.instance_of?(Pawn) && vertical_move == 2  #this was a special move that left tags for enpassant check but I
@@ -130,6 +130,7 @@ class Board
 	end
 
 	def enpassant_check(coordinates, old_cell, new_cell, color_moving)
+
 		coordinates_to_check = [[coordinates[2],(coordinates[3]-1)],[coordinates[2],(coordinates[3]+1)]] #the squares either side of the pawn that has just moved 2
 		coordinates_to_check.each do |x|
 			if on_board(x)

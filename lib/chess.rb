@@ -291,6 +291,8 @@ module Chess
 	end
 
 
+
+
 	def get_move_set(piece)
 		if piece.instance_of?(Queen)
 			@move_set = [[1,1],[-1,-1], [-1, 1], [1, -1],[1,0],[-1,0], [0,1], [0, -1]]

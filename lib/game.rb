@@ -40,9 +40,7 @@ class Game
 		elsif @sum_of_moves == 0
 				stalemate		
 		elsif in_check?(player_turn.color)
-				@player_turn.in_check = true
-			 
-				
+				@player_turn.in_check = true		
 		end
 	
 		
@@ -58,28 +56,17 @@ class Game
 	end
 
 	def player_move
-
-		#move_ok = false
-		#while move_ok == false
 			choice = get_choice
-
 			coordinates = convert_choice(choice)
 			vertical_move =  (coordinates[0] - coordinates[2]).abs
 			old_cell = @board.grid[coordinates[0]][coordinates[1]]
 			new_cell = @board.grid[coordinates[2]][coordinates[3]]
-		#	snapshot(old_cell, new_cell)
 			@board.update_board(coordinates, old_cell, new_cell)
-			if old_cell.piece.instance_of?(Pawn) && vertical_move == 2
+			if new_cell.piece.instance_of?(Pawn) && vertical_move == 2
 				@board.enpassant_check(coordinates, old_cell, new_cell, @player_turn.color)
+			elsif new_cell.piece.instance_of?(Pawn) && @board.last_row(coordinates)
+				@board.promote(old_cell, new_cell)		#this is not working currently tries to update board again, just need to change piece now as board has already been updated
 			end	
-		#	if in_check?(@player_turn.color)	
-		#		puts "That move is illegal, it would leave you in check."
-		#		revert_board(old_cell, new_cell)
-		#	else
-		#		move_ok = true
-		#	end		
-		#end	
-
 	end
 
 	def stalemate
@@ -95,54 +82,7 @@ class Game
 		
 	end
 
-	def snapshot(old_cell, new_cell)
-		@old_cell_snapshot = cell_memory(old_cell)
-		@new_cell_snapshot = cell_memory(new_cell)
-		
-	end
-
-	def cell_memory(cell)
-		cell_contents =  []
-		cell_contents<<cell.symbol
-		cell_contents<<cell.enpassant
-		cell_contents<<cell.enpassant_color
-		cell_contents<<cell.piece
-		if cell.piece != 0
-			cell_contents<<cell.piece.first_move
-		end	
-		
-		cell_contents
-	end	
-
-
-
-	def revert_board(old_cell, new_cell)
-		revert_cell(old_cell, @old_cell_snapshot)
-		revert_cell(new_cell, @new_cell_snapshot)
-	end
-
-	def revert_cell(cell, contents)
-		cell.symbol = contents[0]
-		if cell.enpassant != false && cell.enpassant.size == 3
-			cell_coords = cell.enpassant[0..1]
-			contents[2] == 'white' ? cell_color = 'black' : cell_color = 'white'
-			replace_enpassant_pawn(cell_coords, cell_color)
-				puts "enpassant take attempted that will have to be reverted"
-		end
-		cell.enpassant = contents[1]
-		cell.enpassant_color = contents[2]
-		cell.piece = contents[3]
-		if cell.piece != 0
-			cell.piece.first_move = contents[4]
-		end	
-
-	end	
-
-	def replace_enpassant_pawn(coords, color)
-		cell = @board.grid[coords[0]][coords[1]]
-		@board.new_piece(cell, Pawn, color)
-		
-	end
+	
 	
 	def get_choice
 		move_choice = gets.downcase.chomp
@@ -160,11 +100,6 @@ class Game
 	def switch_player
 		@player_turn.in_check = false
 		@player_turn == @player_1 ? @player_turn = @player_2 : @player_turn = @player_1
-		#if @player_turn == @player_1
-		#	@player_turn = @player_2
-		#else
-		#	@player_turn = @player_1
-		#end
 		all_available_moves(@player_turn.color)
 	end
 
