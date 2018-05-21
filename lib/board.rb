@@ -80,7 +80,7 @@ class Board
 	def update_board(coordinates, old_cell, new_cell)
 		
 		horizonal_move = (coordinates[1] - coordinates[3]).abs
-		vertical_move =  (coordinates[0] - coordinates[2]).abs
+		#vertical_move =  (coordinates[0] - coordinates[2]).abs
 		
 		color_moving = old_cell.piece.color
 		

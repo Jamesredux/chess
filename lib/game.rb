@@ -10,6 +10,7 @@ class Game
 	def new_game
 		@board = Board.new
 		@board.draw_board
+		@game_over = false
 		
 	end
 
@@ -19,27 +20,33 @@ class Game
 		@player_turn = @player_1
 	end		
 
-	def play_game
-		game_over = false
-		until game_over
-		player_greeting
+	def play_chess
 		all_available_moves(@player_turn.color)
-		if @sum_of_moves == 0 
-			puts "Stalemate #{player_turn} has no legal moves -- game over"
-			game_over = true
+		until @game_over
+			play_game
 		end	
+		
+	end
+
+	def play_game
+		player_greeting
 		player_move
+		
 		@board.clean_board(@player_turn.color) #this removes enpassant tags at the moment
 		switch_player
-			if in_check?(@player_turn.color)
-				#checkmate check here
-				@player_turn.in_check = true
-			else 
-				@player_turn.in_check = false	
-			end
-
 		@board.draw_board
+		if in_check?(@player_turn.color) && @sum_of_moves == 0
+				checkmate
+		elsif @sum_of_moves == 0
+				stalemate		
+		elsif in_check?(player_turn.color)
+				@player_turn.in_check = true
+			 
+				
 		end
+	
+		
+
 	end
 
 	def player_greeting
@@ -73,6 +80,19 @@ class Game
 		#	end		
 		#end	
 
+	end
+
+	def stalemate
+			puts "Stalemate #{player_turn.player_name} has no legal moves -- game over"
+			
+			@game_over = true
+	end
+
+	def checkmate
+		@player_turn.color == 'black' ? winning_color = 'white' : winning_color = 'black'
+		puts "CHECKMATE #{player_turn.player_name} cannot escape #{winning_color} is the winner"
+		@game_over = true
+		
 	end
 
 	def snapshot(old_cell, new_cell)
@@ -138,11 +158,14 @@ class Game
 
 
 	def switch_player
-		if @player_turn == @player_1
-			@player_turn = @player_2
-		else
-			@player_turn = @player_1
-		end
+		@player_turn.in_check = false
+		@player_turn == @player_1 ? @player_turn = @player_2 : @player_turn = @player_1
+		#if @player_turn == @player_1
+		#	@player_turn = @player_2
+		#else
+		#	@player_turn = @player_1
+		#end
+		all_available_moves(@player_turn.color)
 	end
 
 	
@@ -152,7 +175,7 @@ end
 game = Game.new
 game.create_players
 game.new_game
-game.play_game
+game.play_chess
 
 
 	
