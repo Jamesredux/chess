@@ -65,7 +65,7 @@ class Game
 			if new_cell.piece.instance_of?(Pawn) && vertical_move == 2
 				@board.enpassant_check(coordinates, old_cell, new_cell, @player_turn.color)
 			elsif new_cell.piece.instance_of?(Pawn) && @board.last_row(coordinates)
-				@board.promote(old_cell, new_cell)		#this is not working currently tries to update board again, just need to change piece now as board has already been updated
+				@board.promote(new_cell)		#this is not working currently tries to update board again, just need to change piece now as board has already been updated
 			end	
 	end
 

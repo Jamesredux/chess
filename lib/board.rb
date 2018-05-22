@@ -204,13 +204,14 @@ class Board
 			end	
 	end	
 
-	def promote(old_cell, new_cell)
+	def promote(new_cell)
 		puts "Your Pawn has reached the final rank. How would you like to promote it\ninput 'Q' for Queen, 'K' for knight, 'R' for rook or 'B' for bishop."
 		new_piece = choose_promotion
 		piece_name = promote_piece(new_piece)
-		new_piece(old_cell, piece_name, old_cell.piece.color)
-		puts old_cell.inspect		
-		move_piece(old_cell, new_cell)		#technically this changes the piece before it moves, is this a problem
+
+		new_piece(new_cell, piece_name, new_cell.piece.color)
+		puts new_cell.inspect		
+		#move_piece(old_cell, new_cell)		#technically this changes the piece before it moves, is this a problem
 	end
 
 	def choose_promotion
