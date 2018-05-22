@@ -79,23 +79,13 @@ class Board
 	
 	def update_board(coordinates, old_cell, new_cell)
 		
-		horizonal_move = (coordinates[1] - coordinates[3]).abs
-		#vertical_move =  (coordinates[0] - coordinates[2]).abs
+		horizonal_move = (coordinates[1] - coordinates[3]).abs		
+		#color_moving = old_cell.piece.color
 		
-		color_moving = old_cell.piece.color
-		
-		
-		if new_cell.enpassant != false
-			puts "#{coordinates.inspect} is giving me shit"
+		if old_cell.piece.instance_of?(Pawn) && new_cell.enpassant != false
 			enpassant_take(coordinates, old_cell, new_cell)
-		#elsif old_cell.piece.instance_of?(Pawn) && last_row(coordinates)
-		#		promote(old_cell, new_cell)	
 		elsif old_cell.piece.instance_of?(King) && horizonal_move == 2
 			castle(coordinates, old_cell, new_cell)
-		#elsif old_cell.piece.instance_of?(Pawn) && vertical_move == 2  #this was a special move that left tags for enpassant check but I
-		#have taken it out of update board as update board is used for dummy updates and you only have to leave the tags after a real move
-		#	enpassant_check(coordinates, old_cell, new_cell, color_moving)
-		#	move_piece(old_cell, new_cell)	
 		else	
 			move_piece(old_cell, new_cell)
 		end	
@@ -154,7 +144,7 @@ class Board
 		move_piece(old_cell, new_cell)
 	end
 
-	def on_board(coordinates) #copy of method in chess module
+	def on_board(coordinates) 
 		if coordinates[0] < 0 || coordinates[0] > 7
 			false
 		elsif coordinates[1] < 0 || coordinates[1] > 7
@@ -208,10 +198,7 @@ class Board
 		puts "Your Pawn has reached the final rank. How would you like to promote it\ninput 'Q' for Queen, 'K' for knight, 'R' for rook or 'B' for bishop."
 		new_piece = choose_promotion
 		piece_name = promote_piece(new_piece)
-
 		new_piece(new_cell, piece_name, new_cell.piece.color)
-		puts new_cell.inspect		
-		#move_piece(old_cell, new_cell)		#technically this changes the piece before it moves, is this a problem
 	end
 
 	def choose_promotion

@@ -35,14 +35,7 @@ class Game
 		@board.clean_board(@player_turn.color) #this removes enpassant tags at the moment
 		switch_player
 		@board.draw_board
-		if in_check?(@player_turn.color) && @sum_of_moves == 0
-				checkmate
-		elsif @sum_of_moves == 0
-				stalemate		
-		elsif in_check?(player_turn.color)
-				@player_turn.in_check = true		
-		end
-	
+		status_check
 		
 
 	end
@@ -65,13 +58,22 @@ class Game
 			if new_cell.piece.instance_of?(Pawn) && vertical_move == 2
 				@board.enpassant_check(coordinates, old_cell, new_cell, @player_turn.color)
 			elsif new_cell.piece.instance_of?(Pawn) && @board.last_row(coordinates)
-				@board.promote(new_cell)		#this is not working currently tries to update board again, just need to change piece now as board has already been updated
+				@board.promote(new_cell)
 			end	
 	end
 
+	def status_check
+		if in_check?(@player_turn.color) && @sum_of_moves == 0
+				checkmate
+		elsif @sum_of_moves == 0
+				stalemate		
+		elsif in_check?(player_turn.color)
+				@player_turn.in_check = true		
+		end		
+	end
+
 	def stalemate
-			puts "Stalemate #{player_turn.player_name} has no legal moves -- game over"
-			
+			puts "Stalemate #{player_turn.player_name} has no legal moves -- game over"	
 			@game_over = true
 	end
 
