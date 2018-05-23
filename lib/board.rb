@@ -75,13 +75,9 @@ class Board
 		cell.symbol = cell.piece.symbol
 	end
 
-
-	
 	def update_board(coordinates, old_cell, new_cell)
 		
 		horizonal_move = (coordinates[1] - coordinates[3]).abs		
-		#color_moving = old_cell.piece.color
-		
 		if old_cell.piece.instance_of?(Pawn) && new_cell.enpassant != false
 			enpassant_take(coordinates, old_cell, new_cell)
 		elsif old_cell.piece.instance_of?(King) && horizonal_move == 2
@@ -119,25 +115,7 @@ class Board
 		
 	end
 
-	def enpassant_check(coordinates, old_cell, new_cell, color_moving)
-
-		coordinates_to_check = [[coordinates[2],(coordinates[3]-1)],[coordinates[2],(coordinates[3]+1)]] #the squares either side of the pawn that has just moved 2
-		coordinates_to_check.each do |x|
-			if on_board(x)
-				square = grid[x[0]][x[1]]
-				if square.piece.instance_of?(Pawn) && square.piece.color != color_moving
-					color_moving == "black" ? color_can_take = 'white' : color_can_take = 'black' 
-					coordinates_behind = [(coordinates[0]+coordinates[2])/2,coordinates[1]] #square behind the pawn  that the taking pawn would move to.
-					square_behind = grid[coordinates_behind[0]][coordinates_behind[1]]
-					square_behind.enpassant = [coordinates[2],coordinates[3]] #stores cell infront that pawn will be removed from.
-					square_behind.enpassant_color = color_can_take	
-					end	
-			end
-		end
-	end
-
 	def enpassant_take(coordinates, old_cell, new_cell)
-		puts "Enpassant take"
 		cell_to_empty = grid[new_cell.enpassant[0]][new_cell.enpassant[1]]
 		empty_cell(cell_to_empty)
 		new_cell.enpassant << 9 #works as a tag to be identified in revert cell if this move has to be taken back.
@@ -170,6 +148,23 @@ class Board
 		update_cell(cell)
 	end
 
+	def enpassant_check(coordinates, old_cell, new_cell, color_moving)
+
+		coordinates_to_check = [[coordinates[2],(coordinates[3]-1)],[coordinates[2],(coordinates[3]+1)]] #the squares either side of the pawn that has just moved 2
+		coordinates_to_check.each do |x|
+			if on_board(x)
+				square = grid[x[0]][x[1]]
+				if square.piece.instance_of?(Pawn) && square.piece.color != color_moving
+					color_moving == "black" ? color_can_take = 'white' : color_can_take = 'black' 
+					coordinates_behind = [(coordinates[0]+coordinates[2])/2,coordinates[1]] #square behind the pawn  that the taking pawn would move to.
+					square_behind = grid[coordinates_behind[0]][coordinates_behind[1]]
+					square_behind.enpassant = [coordinates[2],coordinates[3]] #stores cell infront that pawn will be removed from.
+					square_behind.enpassant_color = color_can_take	
+					end	
+			end
+		end
+	end
+
 	def clean_board(color) #that will be the color that has just moved.
 			grid.each do |row|
 				row.each do |cell|
@@ -177,7 +172,7 @@ class Board
 				end
 			end		
 	end
-
+	
 	def clear_enpassant(cell, color)
 		if cell.enpassant != false && cell.enpassant_color == color 
 			cell.enpassant = false

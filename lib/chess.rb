@@ -2,7 +2,6 @@ require_relative 'board'
 
 module Chess
 		
-
 	def correct_input(move_choice, color)
 		if correct_length(move_choice) == false 
 			puts "Incorrect input! Please only input 4 characters eg. A6A5"
@@ -32,7 +31,7 @@ module Chess
 		end
 	end 			
 
-	def letters_ok(a,b)
+	def letters_ok(a,b) 
 		letter_coords = ['a','b','c','d','e','f','g','h']
 
 		if letter_coords.include?(a) && letter_coords.include?(b) 
@@ -42,7 +41,7 @@ module Chess
 		end
 	end
 
-	def numbers_ok(a, b)	
+	def numbers_ok(a, b)
 		number_coords = ['1','2','3','4','5','6','7','8']
 
 		if  number_coords.include?(a) && number_coords.include?(b)
@@ -51,10 +50,6 @@ module Chess
 			false	
 		end			 
 	end
-
-
-
-
 
 	def legal_move(move_choice, color)
 			@coordinates = convert_choice(move_choice)
@@ -274,7 +269,6 @@ module Chess
 			cell_coords = cell.enpassant[0..1]
 			contents[2] == 'white' ? cell_color = 'black' : cell_color = 'white'
 			replace_enpassant_pawn(cell_coords, cell_color)
-				puts "enpassant take attempted that will have to be reverted"
 		end
 		cell.enpassant = contents[1]
 		cell.enpassant_color = contents[2]
@@ -377,10 +371,6 @@ module Chess
 				elsif square.piece.color == color
 
 			    false
-			  #elsif square.piece.instance_of?(King)
-			  #	puts "**** I PUT YOU IN CHECK  *****"
-			  	#this doesn't work at present at this is called before each move -
-			  	# to work it would have to be called after each move.
 			  end 	
 		end
 	end
@@ -393,8 +383,6 @@ module Chess
 				
 				elsif square.piece.color != color 
 			   @take_opportunity = true
-			  
-			  	
 			  end 			
 		@take_opportunity	  
 	end	
@@ -411,19 +399,10 @@ module Chess
 
 
 	end	
-	#could also go through other pieces available moves, if they include square to check -- it is under attack
 
-	#is square  under attack method at the moment I plan to make it that this will return true or false on whether
-	# a cell is under attact. Stored in the cell object. I could also add what it is under attack from and where 
-	# but I am not sure if I need this at the moment.
-	# for checking check  mate i plan to go through all the possible moves for the side under attact until I find 
-	# a situation when the king is not under attack.
 
 	def under_attack?(coordinates, color)
-		#puts "checking if #{coordinates.inspect} is under attack"
-		#add check is enpassant attack
 		if attack_from_knight(coordinates, color) == true
-			puts "under attack from knight"
 			true
 		elsif 
 				straight_attack(coordinates, color) == true
@@ -471,7 +450,6 @@ module Chess
 							#need to stop if hit other opposition piece9
 							elsif 
 									next_cell.piece.instance_of?(King) == true && @distance == 1
-									#puts "the king threatens the square"
 									@clear_path = false
 
 									@straight_threat = true
@@ -498,7 +476,7 @@ module Chess
 			@clear_path = true
 			@distance = 1
 				while @clear_path
-					next_square = change_square(start_square, move)#[start_square, move].transpose.map { |y| y.reduce(:+) }
+					next_square = change_square(start_square, move)
 						if square_check(next_square, color) == false	#checks if square is off board or occupied by piece of own color
 							@clear_path = false
 						else next_cell = @board.grid[next_square[0]][next_square[1]]
@@ -569,8 +547,6 @@ module Chess
 	end
 
 	def find_king(color)
-		
-
 		@board.grid.each_with_index do |row, index|
 			x_coord = index
 			row.each_with_index do |cell, index|
@@ -665,8 +641,6 @@ module Chess
 		else
 			false
 		end		
-		
-		
 	end
 
 

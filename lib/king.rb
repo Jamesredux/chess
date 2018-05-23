@@ -6,7 +6,6 @@ class King < Piece
 	def initialize(color)
 		super
 		@symbol = find_symbol
-		@in_check = false
 	end
 
 	def find_symbol
