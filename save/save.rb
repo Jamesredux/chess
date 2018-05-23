@@ -6,6 +6,7 @@ require "yaml"
 
 
 def test_save
+	puts "called"
 	@board_dump = YAML::dump(@board)
 	@board_copy = YAML::load(@board_dump)
 	cood = [1,2,6,0]

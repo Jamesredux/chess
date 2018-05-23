@@ -88,8 +88,9 @@ class Game
 	
 	def get_choice
 		move_choice = gets.downcase.chomp
-		
-		if correct_input(move_choice, @player_turn.color) == false 
+		if move_choice == 'save'
+			test_save
+		elsif correct_input(move_choice, @player_turn.color) == false 
 			move_choice = get_choice		
 		elsif legal_move(move_choice, @player_turn.color) == false
 			move_choice = get_choice 
