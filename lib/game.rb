@@ -1,17 +1,39 @@
 require_relative 'board'
 require_relative 'player'
 require_relative 'chess'
-require_relative "../save/save"
+require_relative 'load'
+#require_relative "../save/save"
+require "yaml" 
 
 class Game
+
 	include Chess
+	include Load
 	attr_accessor :player_turn, :board
 
+	def start_chess 
+		puts "Welcome to chess, please select N for a new game or L to load a previous game."
+
+		choice = gets.chomp.downcase
+		if choice == 'n'
+			new_game
+		elsif choice == 'l'
+			start_loading
+		else
+			puts "I didn't understand that choice"
+			start_chess
+		end	
+
+
+
+	end	
+
 	def new_game
+		create_players
 		@board = Board.new
 		@board.draw_board
 		@game_over = false
-		
+		play_chess
 	end
 
 	def create_players
@@ -30,27 +52,32 @@ class Game
 
 	def play_game
 		player_greeting
-		player_move
-		
-		@board.clean_board(@player_turn.color) #this removes enpassant tags at the moment
-		switch_player
-		@board.draw_board
-		status_check
-		
+		player_choice = get_choice
+		if player_choice == 'r'
+			resign_game
+		elsif player_choice == 's'
+			save_game
+		else player_move(player_choice)		
+			@board.clean_board(@player_turn.color) #this removes enpassant tags at the moment
+			switch_player
+			@board.draw_board
+			status_check
+		end
 
 	end
 
 	def player_greeting
 		if @player_turn.in_check == false 
-			puts "#{@player_turn.player_name} Input your choice"
+			puts "#{@player_turn.player_name} Input your choice or press 'R' to resign or 'S' to save"
 		else
-			puts "******#{@player_turn.player_name} IS IN CHECK****** \n#{@player_turn.player_name} Input your choice"
+			puts "******#{@player_turn.player_name} IS IN CHECK****** \n#{@player_turn.player_name} Input your choice or press 'R' to resign or 'S' to save"
 		end	
 	end
 
-	def player_move
-			choice = get_choice
-			coordinates = convert_choice(choice)
+
+
+	def player_move(player_choice)
+			coordinates = convert_choice(player_choice)
 			vertical_move =  (coordinates[0] - coordinates[2]).abs
 			old_cell = @board.grid[coordinates[0]][coordinates[1]]
 			new_cell = @board.grid[coordinates[2]][coordinates[3]]
@@ -61,6 +88,21 @@ class Game
 				@board.promote(new_cell)
 			end	
 	end
+
+	def get_choice
+		player_input = gets.downcase.chomp
+		if player_input == 'r'
+		 	player_input
+		elsif player_input == 's'
+			player_input	
+		elsif correct_input(player_input, @player_turn.color) == false 
+			player_input = get_choice		
+		elsif legal_move(player_input, @player_turn.color) == false
+			player_input = get_choice 
+		end
+			player_input
+	end	
+
 
 	def status_check
 		if in_check?(@player_turn.color) && @sum_of_moves == 0
@@ -84,20 +126,19 @@ class Game
 		
 	end
 
-	
-	
-	def get_choice
-		move_choice = gets.downcase.chomp
-		if move_choice == 'save'
-			test_save
-		elsif correct_input(move_choice, @player_turn.color) == false 
-			move_choice = get_choice		
-		elsif legal_move(move_choice, @player_turn.color) == false
-			move_choice = get_choice 
-		end
-			move_choice
-	end	
+	def resign_game
+		puts "Are  you sure you wish to resign, press 'Y' to confirm resignation or any other key to continue playing"
+		confirmation = gets.downcase.chomp
+			if confirmation == 'y'
+				@player_turn.color == 'black' ? winning_color = 'white' : winning_color = 'black'
+				puts "#{@player_turn.player_name} has resigned #{winning_color} is the winner."
+				@game_over = true
+			end
+	end
 
+	
+	
+	
 
 
 	def switch_player
@@ -106,15 +147,81 @@ class Game
 		all_available_moves(@player_turn.color)
 	end
 
+
+	def save_game
+		prog_string = "Chess Game"
+		
+		saved_data = YAML::dump(self)
+
+		Dir.mkdir("saves") unless Dir.exists?("saves")
+
+		puts "saving game.."
+		filename = "saves/<>#{prog_string}<>#{Time.now.strftime('%d-%m-%y_%H:%M')}.yaml"  
+		File.open(filename, "w") do |file|
+			file.puts YAML::dump(self)
+
+		end 
+
+		puts "Game Saved. If You wish to quit press 'Q', any other key to continue playing."
+		choice = gets.downcase.chomp
+		if choice == 'q'
+			@game_over = true
+		end	
+
+	end
+
+	def start_loading
+			@save_names = []
+			@save_id = 1
+			list_saves
+			get_load_choice
+		end
+
+	def list_saves
+		puts "List of Saved Games:"
+			Dir.glob("./saves/*").each do |file|
+				@save_names<<file 
+				file = file[8..-6]
+					puts "Save Number #{@save_id} #{file}"
+					@save_id += 1
+			end
+			
+		if @save_id == 1
+		puts "*****************"
+		puts "There are no saved games. Hit the 'N' key to start a new game."
+		puts "*****************"
+
+		end	
+				
+	end
+
+	def get_load_choice
+		puts "Please choose which game you would like to load (number), or type \"N\" for a new game or \"D\" to delete all your saved games:"
+		
+		choice = gets.chomp
+		
+		if choice.downcase == "n"  
+			new_game
+		elsif choice.downcase == "d"	
+			delete_saves	
+		elsif choice.to_i.between?(1, @save_id-1)	
+			load_game(@save_names, choice)	
+		else
+			puts "Sorry, I didn't understand that:"
+			choice = get_load_choice
+		end				
+
+	end
+
+
+
 	
 end	
 
 
 game = Game.new
-game.create_players
-game.new_game
-game.play_chess
 
+game.start_chess
 
 	
 
