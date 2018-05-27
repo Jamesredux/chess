@@ -2,7 +2,6 @@ require_relative 'board'
 require_relative 'player'
 require_relative 'chess'
 require_relative 'load'
-#require_relative "../save/save"
 require "yaml" 
 
 class Game
@@ -23,9 +22,6 @@ class Game
 			puts "I didn't understand that choice"
 			start_chess
 		end	
-
-
-
 	end	
 
 	def new_game
@@ -35,19 +31,12 @@ class Game
 		@game_over = false
 		play_chess
 	end
-
-	def create_players
-		@player_1 = Player.new("Player_1", "white")
-		@player_2 = Player.new("Player_2", "black")
-		@player_turn = @player_1
-	end		
-
+		
 	def play_chess
 		all_available_moves(@player_turn.color)
 		until @game_over
 			play_game
-		end	
-		
+		end		
 	end
 
 	def play_game
@@ -115,7 +104,7 @@ class Game
 	end
 
 	def stalemate
-			puts "Stalemate #{player_turn.player_name} has no legal moves -- game over"	
+			puts "Stalemate #{player_turn.player_name} has no legal moves the game ends in a draw."	
 			@game_over = true
 	end
 
@@ -136,20 +125,8 @@ class Game
 			end
 	end
 
-	
-	
-	
-
-
-	def switch_player
-		@player_turn.in_check = false
-		@player_turn == @player_1 ? @player_turn = @player_2 : @player_turn = @player_1
-		all_available_moves(@player_turn.color)
-	end
-
-
 	def save_game
-		prog_string = "Chess Game"
+		prog_string = "Chess Game" #may change this, give player option to name game.
 		
 		saved_data = YAML::dump(self)
 
@@ -219,8 +196,8 @@ class Game
 end	
 
 
+#to auto start
 game = Game.new
-
 game.start_chess
 
 	

@@ -2,10 +2,6 @@ require_relative 'board'
 
 	module Load
 
-
-	
-
-
 	def load_game(save_names, game_choice) 
 		puts "Loading save number #{game_choice} please wait:\n"
 		game_choice = game_choice.to_i
@@ -16,8 +12,6 @@ require_relative 'board'
 		puts "Welcome Back\n\n" 
 			
 			loaded_game = YAML::load(File.open(file_name))
-		
-		#puts "You have had #{loaded_game.guess_count} guesses"
 
 		loaded_game.board.draw_board
 		loaded_game.play_chess

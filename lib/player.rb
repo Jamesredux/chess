@@ -7,18 +7,4 @@ class Player
 		@color = color
 		@in_check  = false
 	end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 end	

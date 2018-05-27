@@ -10,10 +10,5 @@ class Cell
 		@enpassant = false
 		@enpassant_color = 0
 	end	
-
-
-	
-
-
 end	
 

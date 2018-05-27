@@ -1,6 +1,12 @@
 require_relative 'board'
 
 module Chess
+
+	def create_players
+		@player_1 = Player.new("Player_1", "white")
+		@player_2 = Player.new("Player_2", "black")
+		@player_turn = @player_1
+	end
 		
 	def correct_input(move_choice, color)
 		if correct_length(move_choice) == false 
@@ -71,6 +77,11 @@ module Chess
 			end
 	end	
 
+	def switch_player
+		@player_turn.in_check = false
+		@player_turn == @player_1 ? @player_turn = @player_2 : @player_turn = @player_1
+		all_available_moves(@player_turn.color)
+	end
 
 	def change_square(startsquare, move)
 			new_coordinates = [startsquare, move].transpose.map { |y| y.reduce(:+) }
