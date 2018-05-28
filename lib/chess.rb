@@ -1,4 +1,4 @@
-require_relative 'board'
+#require_relative 'board'
 
 module Chess
 
@@ -87,6 +87,7 @@ module Chess
 			new_coordinates = [startsquare, move].transpose.map { |y| y.reduce(:+) }
 	end
 
+	### all available moves methods
 
 	def all_available_moves(color) 
 		@sum_of_moves = 0 #counter that goes up every time a move is added - if it stays at 0 then stalemate/checkmate
@@ -95,8 +96,6 @@ module Chess
 			map_moves(x, color)
 		end
 	end	
-
-
 
 	def squares_with_piece(color)
 		@location_of_pieces = []
@@ -653,8 +652,6 @@ module Chess
 			false
 		end		
 	end
-
-
 
 
 end	
