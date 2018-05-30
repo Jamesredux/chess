@@ -339,9 +339,8 @@ module Chess
 				end
 			end
 		else
-			false	
+			 false	
 		end			
-		
 	end
 
 	def castle_empty(row, squares_array)
@@ -529,7 +528,8 @@ module Chess
 		@pawn_threat			
 	end
 
-	def threat_from_square(coordinates, piece, color) #only used by knight check at present
+	def threat_from_square(coordinates, piece, color) #only used by knight check at present not a very good or clear method
+		#only tells you if there is an opposition piece on that square
 		@threat_present = false
 		if square_on_board(coordinates) == false
 			false

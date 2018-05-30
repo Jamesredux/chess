@@ -31,6 +31,8 @@ class Game
 		@game_over = false
 		play_chess
 	end
+
+
 		
 	def play_chess
 		all_available_moves(@player_turn.color)
@@ -200,7 +202,6 @@ end
 game = Game.new
 game.start_chess
 
-	
 
 
 

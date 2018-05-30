@@ -216,4 +216,16 @@ class Board
 		end		
 		piece_name
 	end
+
+	def empty_board #for testing
+		
+		@grid.each_with_index do |row, index|
+			x_coord = index
+			row.each_with_index do |cell, index|
+				y_coord = index
+					empty_cell(cell)		
+			end
+		end
+		
+	end	
 end
