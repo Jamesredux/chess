@@ -39,6 +39,30 @@ describe Board do
 		end
 
 		context "update board" do 
+				let(:old_cell) { @board.grid[6][4] }
+			  let(:new_cell) { @board.grid[4][4] }
+			
+			it "empties old cell" do
+				@board.update_board([6,4,4,4], old_cell, new_cell )
+				expect(@board.grid[6][4].piece).to be(0)
+			end
+
+			it "populates new cell" do
+				@board.update_board([6,4,4,4], old_cell, new_cell )
+				expect(@board.grid[4][4].piece).to be_instance_of(Pawn)
+
+			end
+		end	 
+
+			context "castle" do
+			let(:old_cell) { @board.grid[7][4] }
+			let(:new_cell) { @board.grid[7][6] }
+
+			it "calls castle method when king moves 2 horizontally" do 
+				@board.update_board([7,4,7,6], old_cell, new_cell)
+				expect(@board.grid[7][5].piece).to be_instance_of(Rook)
+			end	
+
 
 
 		end

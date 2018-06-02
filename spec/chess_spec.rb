@@ -335,3 +335,89 @@ describe "single move check" do
 end
 
 end
+
+describe "complex examples" do
+	include Chess
+
+	context "all available moves" do 
+		before do 
+			@board = Board.new
+			@player_turn = Player.new("rspec", 'white') 
+		end
+
+		it "it counts the 20 available moves on opening" do 
+			all_available_moves('white')
+			expect(@sum_of_moves).to eql(20)
+		end	
+			
+		let(:space1) { @board.grid[6][5] }
+		let(:space2) { @board.grid[6][6] }
+		let(:space3) { @board.grid[0][3] }
+		let(:space4) { @board.grid[1][4] }
+		let(:newcell1) { @board.grid[5][5] }
+		let(:newcell2) { @board.grid[4][6] }
+		let(:newcell3) { @board.grid[2][4] }
+		let(:newcell4) { @board.grid[4][7] }
+
+			it "is zero when the board is in checkmate" do #fools mate
+				@board.update_board([6,5,5,5], space1, newcell1)
+				@board.update_board([6,6,4,6], space2, newcell2)
+				@board.update_board([0,3,4,7], space3, newcell4)
+				@board.update_board([1,4,2,4], space4, newcell3)
+				all_available_moves('white')
+				expect(@sum_of_moves).to eql(0)
+
+
+			end	
+
+		it "is zero in stalemate" do 
+			@board.empty_board 
+			@board.new_piece(@board.grid[7][7], King, "white")
+			@board.new_piece(@board.grid[5][6], Queen, "black")
+			all_available_moves('white')
+			expect(@sum_of_moves).to eql(0)
+
+		end	
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+end

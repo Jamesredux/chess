@@ -11,11 +11,13 @@ class Game
 	attr_accessor :player_turn, :board
 
 	def start_chess 
-		puts "Welcome to chess, please select N for a new game or L to load a previous game."
+		puts "Welcome to chess, please select N for a new game, C to play the computer or L to load a previous game."
 
 		choice = gets.chomp.downcase
 		if choice == 'n'
 			new_game
+		elsif choice == 'c'
+			new_computer_game	
 		elsif choice == 'l'
 			start_loading
 		else
@@ -24,8 +26,18 @@ class Game
 		end	
 	end	
 
+
+
 	def new_game
 		create_players
+		@board = Board.new
+		@board.draw_board
+		@game_over = false
+		play_chess
+	end
+
+	def new_computer_game
+		create_player_computer
 		@board = Board.new
 		@board.draw_board
 		@game_over = false
@@ -43,22 +55,31 @@ class Game
 
 	def play_game
 		player_greeting
-		player_choice = get_choice
-		if player_choice == 'r'
-			resign_game
-		elsif player_choice == 's'
-			save_game
-		else player_move(player_choice)		
+		if @player_turn.computer ==  true 
+			move = get_computer_move
+		else	
+			player_choice = get_choice #skip this if computer put computer move in player move?
+				if player_choice == 'r'
+					resign_game
+				elsif player_choice == 's'
+					save_game
+				else 
+					move = convert_choice(player_choice)
+				end	
+			end	
+			player_move(move)
 			@board.clean_board(@player_turn.color) #this removes enpassant tags at the moment
 			switch_player
 			@board.draw_board
 			status_check
-		end
+		
 
 	end
 
 	def player_greeting
-		if @player_turn.in_check == false 
+		if @player_turn.computer == true
+			puts "The computer is making his move."
+		elsif @player_turn.in_check == false 
 			puts "#{@player_turn.player_name} Input your choice or press 'R' to resign or 'S' to save"
 		else
 			puts "******#{@player_turn.player_name} IS IN CHECK****** \n#{@player_turn.player_name} Input your choice or press 'R' to resign or 'S' to save"
@@ -67,8 +88,8 @@ class Game
 
 
 
-	def player_move(player_choice)
-			coordinates = convert_choice(player_choice)
+	def player_move(coordinates)
+			#coordinates = convert_choice(player_choice)
 			vertical_move =  (coordinates[0] - coordinates[2]).abs
 			old_cell = @board.grid[coordinates[0]][coordinates[1]]
 			new_cell = @board.grid[coordinates[2]][coordinates[3]]
@@ -81,17 +102,18 @@ class Game
 	end
 
 	def get_choice
-		player_input = gets.downcase.chomp
-		if player_input == 'r'
-		 	player_input
-		elsif player_input == 's'
-			player_input	
-		elsif correct_input(player_input, @player_turn.color) == false 
-			player_input = get_choice		
-		elsif legal_move(player_input, @player_turn.color) == false
-			player_input = get_choice 
-		end
-			player_input
+
+			player_input = gets.downcase.chomp
+				if player_input == 'r'
+		 		player_input
+				elsif player_input == 's'
+				player_input	
+				elsif correct_input(player_input, @player_turn.color) == false 
+				player_input = get_choice		
+				elsif legal_move(player_input, @player_turn.color) == false
+				player_input = get_choice 
+			end
+				player_input		
 	end	
 
 

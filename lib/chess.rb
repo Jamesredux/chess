@@ -7,6 +7,79 @@ module Chess
 		@player_2 = Player.new("Player_2", "black")
 		@player_turn = @player_1
 	end
+
+	def create_player_computer
+		coin_toss = rand(2)
+		coin_toss == 0 ? player_color = 'white' : player_color = 'black'
+		player_color == 'white' ? computer_color = 'black' : computer_color = 'white'
+		
+		@player_1 = Player.new("Player_1", player_color)
+		@player_2 = Player.new("computer", computer_color)
+		@player_2.computer = true
+		player_color == 'white' ? @first_player = @player_1 : @first_player = @player_2
+		@player_turn = @first_player
+	end
+
+	def get_computer_move
+		puts @location_of_pieces.inspect
+		@pieces_with_move = @location_of_pieces.select { |x| has_moves(x)== true }
+		@pieces_with_take = @pieces_with_move.select { |x| has_takes(x)== true }
+		move = deep_thought
+		puts move.inspect
+		return move
+		
+	end
+
+	def has_moves(coord)
+		cell = @board.grid[coord[0]][coord[1]]
+		cell.piece.moves.size>0 ? true : false		
+	end
+
+	def has_takes(coord)
+		@has_take = false
+		cell = @board.grid[coord[0]][coord[1]]
+		cell.piece.moves.each do |x|
+			if oppo_piece(x) == true
+				cell.piece.takes<<x 
+				@has_take = true 
+			end	
+
+		end	
+			@has_take
+			
+	end
+
+	def oppo_piece(coord)
+		move_cell = @board.grid[coord[0]][coord[1]]
+		move_cell.piece == 0 ? false : true 
+		
+	end
+
+	def deep_thought
+		if @pieces_with_take.size != 0
+			move = choose_take
+		else
+			move = choose_move
+		end			
+		move 
+	end
+
+	def choose_take
+		piece_to_move = @pieces_with_take.sample
+		move_cell = @board.grid[piece_to_move[0]][piece_to_move[1]]
+		the_take = move_cell.piece.takes.sample
+		move = piece_to_move + the_take
+		move
+	end
+
+	def choose_move
+		piece_to_move = @pieces_with_move.sample
+		move_cell = @board.grid[piece_to_move[0]][piece_to_move[1]]
+		the_move = move_cell.piece.moves.sample
+		move = piece_to_move + the_move
+		move
+		
+	end
 		
 	def correct_input(move_choice, color)
 		if correct_length(move_choice) == false 
