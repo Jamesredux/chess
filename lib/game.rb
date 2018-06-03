@@ -68,7 +68,7 @@ class Game
 				end	
 			end	
 			player_move(move)
-			@board.clean_board(@player_turn.color) #this removes enpassant tags at the moment
+			@board.clean_board(@player_turn.color) #this removes enpassant tags at the moment 
 			switch_player
 			@board.draw_board
 			status_check
@@ -78,18 +78,22 @@ class Game
 
 	def player_greeting
 		if @player_turn.computer == true
-			puts "The computer is making his move."
+			print "The computer is making his move."
+			sleep 1
+			print "."
+			sleep 1
+			puts  "."
 		elsif @player_turn.in_check == false 
-			puts "#{@player_turn.player_name} Input your choice or press 'R' to resign or 'S' to save"
+			puts "#{@player_turn.player_name} - #{player_turn.color} Input your choice or press 'R' to resign or 'S' to save"
 		else
-			puts "******#{@player_turn.player_name} IS IN CHECK****** \n#{@player_turn.player_name} Input your choice or press 'R' to resign or 'S' to save"
+			puts "******#{@player_turn.player_name} IS IN CHECK****** \n#{@player_turn.player_name} - #{player_turn.color} Input your choice or press 'R' to resign or 'S' to save"
 		end	
 	end
 
 
 
 	def player_move(coordinates)
-			#coordinates = convert_choice(player_choice)
+
 			vertical_move =  (coordinates[0] - coordinates[2]).abs
 			old_cell = @board.grid[coordinates[0]][coordinates[1]]
 			new_cell = @board.grid[coordinates[2]][coordinates[3]]
