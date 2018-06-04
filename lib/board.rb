@@ -1,6 +1,5 @@
 require_relative 'cell'
 require_relative 'draw'
-
 require_relative 'piece'
 require_relative 'chess'
 

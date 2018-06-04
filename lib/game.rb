@@ -1,6 +1,7 @@
 require_relative 'board'
 require_relative 'player'
 require_relative 'chess'
+require_relative 'computer'
 require_relative 'load'
 require "yaml" 
 
@@ -8,6 +9,7 @@ class Game
 
 	include Chess
 	include Load
+	include Computer
 	attr_accessor :player_turn, :board
 
 	def start_chess 

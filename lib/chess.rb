@@ -78,7 +78,7 @@ module Chess
 			puts "take move"
 		else
 			move = choose_move
-			"normal move"
+			puts "normal move"
 		end			
 		move 
 	end
