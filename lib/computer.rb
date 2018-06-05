@@ -30,13 +30,12 @@ module Computer
 		def get_computer_move
 			@pieces_with_move = []
 			@pieces_with_take = []
-			puts "pieces with move #{@pieces_with_move.inspect}"
-			puts "pieces with move #{@pieces_with_take.inspect}"
+
 				@pieces_with_move = @location_of_pieces.select { |x| has_moves(x)== true }
 				@pieces_with_take = @pieces_with_move.select { |x| has_takes(x)== true }
 			move = deep_thought
 			move_mapped = convert_computer_move(move)
-			puts "Computer has chosed #{move_mapped}."
+			puts "Computer has moved from #{move_mapped[0..1].join.upcase} to #{move_mapped[2..3].join.upcase}."
 			return move
 		end
 
@@ -66,10 +65,9 @@ module Computer
 		def deep_thought
 			if @pieces_with_take.size != 0
 				move = choose_take
-				puts "take move"
+				puts "The computer has taken your piece"
 			else
 				move = choose_move
-				puts "normal move"
 			end			
 			move 
 		end
@@ -90,7 +88,43 @@ module Computer
 			move
 		end
 
+		def convert_computer_move(move_choice)
+		
+			converted = []
+			converted[0] = convert_col(move_choice[1])
+			converted[1] = convert_row(move_choice[0])
+			converted[2] = convert_col(move_choice[3])
+			converted[3] = convert_row(move_choice[2])
+	
+			converted
+		end
 
+		def convert_col(x)
+			case x
+			when 0	
+				'a'
+			when 1	
+				'b'
+			when 2	
+				'c'
+			when 3	
+				'd'
+			when 4	
+				'e'
+			when 5	
+				'f'
+			when 6	
+				'g'
+			when 7	
+				'h'
+			end	
+		end
+
+		def convert_row(x)
+		
+			new_num = (8 - x).to_s
+			new_num	
+		end
 
 
 
