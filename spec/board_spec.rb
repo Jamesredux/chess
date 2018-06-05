@@ -62,6 +62,7 @@ describe Board do
 				@board.update_board([7,4,7,6], old_cell, new_cell)
 				expect(@board.grid[7][5].piece).to be_instance_of(Rook)
 			end	
+		end	
 
 			context "castle" do
 			let(:old_cell) { @board.grid[7][4] }

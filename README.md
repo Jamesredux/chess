@@ -1,11 +1,6 @@
-# chess
+Chess 
 
-possible things to do announce when computer is in check
-
-make clearer what move computer has made 
-make board checker
-
-
+This is my solution to the Chess problem in the odin project.
 
 How the game works
 
@@ -32,3 +27,11 @@ It creates a new player class, when it is the computers moves it first searches 
 opportunites to take an opposition piece. If there are any it chooses one at random. If there  are none 
 then it chooses one of the other available moves at random.
 
+##
+
+Things that still need to be done.
+
+Announce when computer is in check
+Make possible to label saved games
+Make clearer what move computer has made 
+Have checkerboard show up in terminal
