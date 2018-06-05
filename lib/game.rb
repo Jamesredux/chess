@@ -105,7 +105,11 @@ class Game
 			if new_cell.piece.instance_of?(Pawn) && vertical_move == 2
 				@board.enpassant_check(coordinates, old_cell, new_cell, @player_turn.color)
 			elsif new_cell.piece.instance_of?(Pawn) && @board.last_row(coordinates)
-				@board.promote(new_cell)
+				if @player_turn.computer == true
+					@board.new_piece(new_cell, Queen, new_cell.piece.color)
+				else
+					@board.promote(new_cell)
+				end	
 			end	
 	end
 
