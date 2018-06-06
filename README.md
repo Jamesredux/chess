@@ -19,6 +19,9 @@ When the player choses a move the computer first checks that it is a valid input
 
 Castling, enpassent and pawn promotion are all included.
 
+The game starts by loading the game.rb file
+or creating a new Game class object and running :start_chess on it.
+
 Computer
 
 
@@ -33,5 +36,4 @@ Things that still need to be done.
 
 Announce when computer is in check
 Make possible to label saved games
-Make clearer what move computer has made 
 Have checkerboard show up in terminal
