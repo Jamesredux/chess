@@ -1,7 +1,6 @@
 
 module Computer
 
-	#need computer to promote
 
 		def create_player_computer
 			player_color = get_color 

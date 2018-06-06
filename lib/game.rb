@@ -78,9 +78,16 @@ class Game
 
 	def player_greeting
 		if @player_turn.computer == true
-			print "The computer is making his move."
+			if @player_turn.in_check == false 
+			print "The computer is thinking..."
 			sleep 1
 			puts  "."
+			else
+				puts  "Computer is in Check"
+				print "The computer is thinking..."
+				sleep 1
+				puts  "."
+			end	
 		elsif @player_turn.in_check == false 
 			puts "#{@player_turn.player_name} - #{player_turn.color} Input your choice or press 'R' to resign or 'S' to save"
 		else
